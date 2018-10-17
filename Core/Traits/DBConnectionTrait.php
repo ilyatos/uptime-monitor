@@ -4,7 +4,7 @@ namespace Core\Traits;
 
 use PDO;
 
-trait ConnectionTrait
+trait DBConnectionTrait
 {
 
     /**
@@ -18,11 +18,11 @@ trait ConnectionTrait
 
         if ($connection === null) {
 
-            $config = require ROOT . '/Core/config/db.php';
+            $config = require dirname(__DIR__) . '/config/db.php';
 
             $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ];
 
             try {
