@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Database;
+namespace Monitor\Database;
 
 use Core\Traits\DBConnectionTrait;
 
@@ -8,20 +8,17 @@ class CreateTable
 {
     use DBConnectionTrait;
 
-    /** @var \PDO */
-    private $connection;
-
-    public function run()
+    public static function run()
     {
-        $this->connection = self::getConnection();
-        $this->createServicesTable();
+        self::createServicesTable();
     }
 
-    public function createServicesTable()
+    public static function createServicesTable()
     {
         $sql = /** @lang SQL */ "
             CREATE TABLE IF NOT EXISTS services (
-                id INT NOT NULL AUTO_INCREMENT, 
+                id INT NOT NULL AUTO_INCREMENT,
+                alias VARCHAR (255),
                 url VARCHAR (255) NOT NULL UNIQUE,
                 response_size FLOAT,
                 response_time TIME,
@@ -31,6 +28,6 @@ class CreateTable
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
             ";
 
-        $this->connection->exec($sql);
+        self::connection()->exec($sql);
     }
 }
