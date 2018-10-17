@@ -2,10 +2,14 @@
 
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 
-use Core\Database\CreateTable;
+use Monitor\Database\CreateTable;
 
 /**
- * Creating table
+ * Create a database, enter login, password, host, db_name
  */
-$createTableAtDB = new CreateTable();
-$createTableAtDB->run();
+
+
+/**
+ * Creating the table
+ */
+CreateTable::run();
