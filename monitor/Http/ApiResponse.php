@@ -32,7 +32,7 @@ class ApiResponse
      * @param array $data
      * @return string
      */
-    public static function success($data, $code = null, $headers = [])
+    public static function success($code, $data = null, $headers = [])
     {
         self::setHeaders($code, $headers);
 
@@ -50,7 +50,7 @@ class ApiResponse
      * @param array $data
      * @return string
      */
-    public static function error($data, $code = null, $headers = [])
+    public static function error($code, $data = null, $headers = [])
     {
         self::setHeaders($code, $headers);
 
