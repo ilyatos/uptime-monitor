@@ -4,14 +4,16 @@ namespace Core\Traits;
 
 use PDO;
 
-trait ConnectionTrait {
+trait ConnectionTrait
+{
 
     /**
      * Get the PDO database connection.
      *
      * @return PDO
      */
-    protected static function getConnection() {
+    protected static function getConnection()
+    {
         static $connection;
 
         if ($connection === null) {
