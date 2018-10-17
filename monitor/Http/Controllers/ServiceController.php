@@ -2,18 +2,22 @@
 
 namespace Monitor\Http\Controllers;
 
+use Monitor\Entities\Service;
 use Monitor\Http\ApiResponse;
 
 class ServiceController
 {
-
     public function index()
     {
-        return;
+        return ApiResponse::success(200, Service::all());
     }
 
     public function store()
     {
-        return;
+        $input = input();
+
+        Service::store();
+
+        return ApiResponse::success(201);
     }
 }
