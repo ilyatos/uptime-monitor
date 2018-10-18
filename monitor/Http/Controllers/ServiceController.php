@@ -16,7 +16,10 @@ class ServiceController
     {
         $input = input();
 
-        Service::store();
+        Service::store([
+            'alias' => $input['alias'],
+            'url' => $input['url']
+        ]);
 
         return ApiResponse::success(201);
     }
