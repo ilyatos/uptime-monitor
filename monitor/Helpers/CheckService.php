@@ -2,7 +2,7 @@
 
 namespace Monitor\Helpers;
 
-class CheckService
+final class CheckService
 {
     private $ch;
     private $executionResult;
@@ -12,14 +12,14 @@ class CheckService
         $this->ch = curl_init($url);
 
         curl_setopt($this->ch, CURLOPT_HEADER, true);
-        curl_setopt($this->ch, CURLOPT_NOBODY, true);
+        //curl_setopt($this->ch, CURLOPT_NOBODY, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($this->ch, CURLOPT_TIMEOUT,5);
 
         $this->executionResult = $this->executeCh();
     }
 
-    public function executeCh() {
+    private function executeCh() {
         return curl_exec($this->ch);
     }
 
@@ -28,13 +28,18 @@ class CheckService
         return curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
     }
 
-    public function getResponseSize()
-    {
-        //return curl_getinfo($this->ch, CURLINFO_REQUEST_SIZE);
-    }
-
     public function getResponseTime()
     {
         return curl_getinfo($this->ch, CURLINFO_TOTAL_TIME);
+    }
+
+    public function getResponseSize()
+    {
+        return curl_getinfo($this->ch, CURLINFO_SIZE_DOWNLOAD);
+    }
+
+    public function getExResult()
+    {
+        return $this->executionResult;
     }
 }
