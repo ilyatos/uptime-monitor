@@ -7,7 +7,7 @@ namespace Monitor\Http;
 class ApiResponse
 {
     /**
-     * Return json encoded data
+     * Return data as json
      *
      * @param array $data
      * @return string
@@ -17,17 +17,17 @@ class ApiResponse
         return json_encode($responseData);
     }
 
-    public static function setHeaders($code = null, $headers = [])
+    public static function setHeaders($code, $headers = [])
     {
         foreach ($headers as $header) {
             header($header);
         }
 
-        if ($code !== null) { http_response_code($code); };
+        http_response_code($code);
     }
 
     /**
-     * Return json encoded data with success = true
+     * Return data as json with success
      *
      * @param array $data
      * @return string
@@ -45,7 +45,7 @@ class ApiResponse
     }
 
     /**
-     * Return json encoded data with success = false
+     * Return data as json with success error
      *
      * @param array $data
      * @return string
