@@ -12,7 +12,6 @@ final class CheckService
         $this->ch = curl_init($url);
 
         curl_setopt($this->ch, CURLOPT_HEADER, true);
-        //curl_setopt($this->ch, CURLOPT_NOBODY, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($this->ch, CURLOPT_TIMEOUT,5);
 
@@ -21,6 +20,11 @@ final class CheckService
 
     private function executeCh() {
         return curl_exec($this->ch);
+    }
+
+    public function getExResult()
+    {
+        return $this->executionResult;
     }
 
     public function getResponseHttpCode()
@@ -38,8 +42,5 @@ final class CheckService
         return curl_getinfo($this->ch, CURLINFO_SIZE_DOWNLOAD);
     }
 
-    public function getExResult()
-    {
-        return $this->executionResult;
-    }
+
 }

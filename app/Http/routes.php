@@ -2,7 +2,7 @@
 
 use Pecee\SimpleRouter\SimpleRouter;
 
-SimpleRouter::group(['namespace' => 'Monitor\Http\Controllers'], function () {
+SimpleRouter::group(['namespace' => 'App\Http\Controllers'], function () {
     SimpleRouter::get('/', function () {
         return 'Home';
     });
