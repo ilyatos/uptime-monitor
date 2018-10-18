@@ -2,7 +2,8 @@
 
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 
-use Monitor\Database\CreateTable;
+use Monitor\Database\CreateTables;
+use Monitor\Database\SeedTables;
 
 /**
  * Create a database, enter login, password, host, db_name
@@ -10,6 +11,7 @@ use Monitor\Database\CreateTable;
 
 
 /**
- * Creating the table
+ * Creating and seeding the table
  */
-CreateTable::run();
+CreateTables::run();
+SeedTables::run();
