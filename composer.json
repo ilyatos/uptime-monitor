@@ -2,7 +2,8 @@
   "autoload": {
     "psr-4": {
       "Core\\": "Core/",
-      "Monitor\\": "monitor/"
+      "App\\": "app/",
+      "Monitor\\": "app/monitor"
     }
   },
   "require": {
