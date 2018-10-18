@@ -1,9 +1,9 @@
 <?php
 
-namespace Monitor\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Monitor\Entities\Service;
-use Monitor\Http\ApiResponse;
+use App\Entities\Service;
+use App\Http\ApiResponse;
 
 class ServiceController
 {
@@ -16,7 +16,7 @@ class ServiceController
     {
         $input = input();
 
-        Service::store([
+        Service::save([
             'alias' => $input['alias'],
             'url' => $input['url']
         ]);

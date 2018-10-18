@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Monitor\Http;
+namespace App\Http;
 
 
 class ApiResponse
@@ -9,7 +9,7 @@ class ApiResponse
     /**
      * Return data as json
      *
-     * @param array $data
+     * @param array $responseData
      * @return string
      */
     public static function json($responseData)
