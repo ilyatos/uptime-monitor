@@ -4,8 +4,15 @@ require_once dirname(__DIR__) . '/../vendor/autoload.php';
 
 use Monitor\Entities\Service;
 use Monitor\Helpers\CheckService;
+use Monitor\Helpers\BotNotification;
 
-$services = Service::all(['url']);
+define('WARNING', "\u{26A0}");
+define('ERROR', "\u{1F6D1}");
+
+$services = Service::all();
+
+$cbn = new BotNotification('https://notify.bot.ifmo.su/u/NLD3L8DR');
+$message = '';
 
 foreach ($services as $service) {
     $availability = 1;
@@ -14,20 +21,33 @@ foreach ($services as $service) {
     $responseSize = 0;
 
     $serviceUrl = $service['url'];
+    $serviceAlias = $service['alias'];
 
     $checker = new CheckService($serviceUrl);
 
-    if ($checker->getResponseHttpCode() === 200) {
-        $reason = 'No error';
+    if ($checker->getExResult() !== false) {
+
+        $responseCode = $checker->getResponseHttpCode();
         $responseTime = $checker->getResponseTime();
         $responseSize = $checker->getResponseSize();
-        //echo $checker->getExResult();
-    } elseif (substr($checker->getResponseHttpCode(),0, 1) == 4) {
+
+        if ($responseCode === 200) {
+            $reason = 'No error';
+        } else {
+            if (substr($responseCode,0, 1) == 4) {
+                $availability = 0;
+                $reason = sprintf('Client error %s', $responseCode);
+                $message .= sprintf(WARNING . 'Client error %s – %s', $responseCode, $serviceAlias) . PHP_EOL;
+            } elseif (substr($responseCode,0, 1) == 5) {
+                $availability = 0;
+                $reason = sprintf('Server error %s', $responseCode);
+                $message .= sprintf(ERROR . 'Server error %s – %s', $responseCode, $serviceAlias) . PHP_EOL;
+            }
+        }
+    } else {
         $availability = 0;
-        $reason = sprintf('Client error %s', $checker->getResponseHttpCode());
-    } elseif (substr($checker->getResponseHttpCode(),0, 1) == 5) {
-        $availability = 0;
-        $reason = sprintf('Server error %s', $checker->getResponseHttpCode());
+        $reason = 'No response';
+        $message .= sprintf(ERROR . 'No response – %s', $serviceAlias) . PHP_EOL;
     }
 
     Service::updateWhere([
@@ -39,6 +59,12 @@ foreach ($services as $service) {
 
     unset($checker);
 }
+
+if ($message !== '') {
+    $cbn->send($message);
+}
+
+
 
 
 
