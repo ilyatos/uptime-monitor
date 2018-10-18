@@ -13,6 +13,6 @@ require_once ROOT . '/vendor/autoload.php';
  * Routing
  */
 require_once ROOT . '/vendor/pecee/simple-router/helpers.php';
-require_once ROOT . '/monitor/http/routes.php';
+require_once ROOT . '/app/http/routes.php';
 
 SimpleRouter::start();
