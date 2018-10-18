@@ -8,6 +8,7 @@
   "require": {
     "pecee/simple-router": "4.2.0.5",
     "ext-curl": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-pdo": "*"
   }
 }
