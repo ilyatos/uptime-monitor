@@ -4,7 +4,7 @@ namespace Monitor\Database;
 
 use Core\Traits\DBConnectionTrait;
 
-class CreateTable
+class CreateTables
 {
     use DBConnectionTrait;
 
@@ -20,14 +20,14 @@ class CreateTable
                 id INT NOT NULL AUTO_INCREMENT,
                 alias VARCHAR (255),
                 url VARCHAR (255) NOT NULL UNIQUE,
-                response_size FLOAT,
-                response_time TIME,
+                response_size FLOAT COMMENT 'Bytes',
+                response_time TIME(3),
                 availability TINYINT (1),
                 reason VARCHAR (255),
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
             ";
 
-        self::connection()->exec($sql);
+        self::getConnection()->exec($sql);
     }
 }
