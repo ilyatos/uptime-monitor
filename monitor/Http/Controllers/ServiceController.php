@@ -20,4 +20,9 @@ class ServiceController
 
         return ApiResponse::success(201);
     }
+
+    public function delete($id)
+    {
+        return ApiResponse::success(204);
+    }
 }
