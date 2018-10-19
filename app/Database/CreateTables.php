@@ -8,6 +8,9 @@ class CreateTables
 {
     use DBConnectionTrait;
 
+    /**
+     * Run the creation of given tables.
+     */
     public static function run()
     {
         self::createServicesTable();
@@ -15,6 +18,11 @@ class CreateTables
         self::createResponsesTable();
     }
 
+    /**
+     * Creates the `services` table.
+     *
+     * @return bool
+     */
     public static function createServicesTable()
     {
         $sql = /** @lang SQL */ "
@@ -30,6 +38,11 @@ class CreateTables
         return self::getConnection()->exec($sql);
     }
 
+    /**
+     * Creates the `reasons` table.
+     *
+     * @return bool
+     */
     public static function createReasonsTable()
     {
         $sql = /** @lang SQL */ "
@@ -43,6 +56,11 @@ class CreateTables
         return self::getConnection()->exec($sql);
     }
 
+    /**
+     * Creates the `responses` table.
+     *
+     * @return bool
+     */
     public static function createResponsesTable()
     {
         $sql = /** @lang SQL */ "
