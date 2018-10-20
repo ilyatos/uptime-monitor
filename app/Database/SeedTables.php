@@ -22,8 +22,6 @@ class SeedTables
 
     private static $reasonsSeeds = [
         ['reason' => 'No error'],
-        ['reason' => 'Client error 4**'],
-        ['reason' => 'Client error 5**'],
     ];
 
     /**
