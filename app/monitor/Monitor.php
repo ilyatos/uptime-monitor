@@ -34,8 +34,8 @@ class Monitor
         $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            $response = $this->checkService($service['id'], $service['url'], $service['alias']);
-            Response::store($response);
+            $serviceResponseData = $this->checkService($service['id'], $service['url'], $service['alias']);
+            Response::store($serviceResponseData);
         }
     }
 
