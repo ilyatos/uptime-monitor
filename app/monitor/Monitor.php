@@ -59,7 +59,7 @@ class Monitor
             'response_size' => $responseSize,
         ];
 
-        if ($this->httpStatusCode->match($responseCode, 200)) {
+        if ($this->httpStatusCode->match($responseCode, '2\d{2}')) {
             $result['availability'] = 1;
         } else {
             $result['availability'] = 0;
