@@ -59,12 +59,9 @@ class HttpStatusCode
      * @param $matched
      * @return bool
      */
-    public function match(int $compared, int $code)
+    public function match(string $compared, string $pattern)
     {
-        if ($code === $compared) {
-            return true;
-        }
-        return false;
+        return preg_match('/' . $pattern . '/', $compared) ? true : false;
     }
 
     /**
