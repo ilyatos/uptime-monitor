@@ -26,14 +26,14 @@ class Monitor
     }
 
     /**
-     * Run the Monitor.
+     * The Monitor's runner.
      */
     public function run()
     {
         $services = Service::all(['alias', 'url']);
 
         foreach ($services as $service) {
-            $this->checkService($service['url'], $service['alias']);
+            $this->checkService($service['id'], $service['url'], $service['alias']);
         }
     }
 
@@ -43,7 +43,7 @@ class Monitor
      * @param string $serviceUrl
      * @param string $serviceAlias
      */
-    private function checkService(string $serviceUrl, string $serviceAlias)
+    private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias)
     {
         $checker = new RequestToService($serviceUrl);
 
