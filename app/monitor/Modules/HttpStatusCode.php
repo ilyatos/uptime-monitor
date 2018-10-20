@@ -4,10 +4,15 @@ namespace Monitor\Modules;
 
 class HttpStatusCode
 {
+    /**
+     * http_code => header_like_value
+     *
+     * @var array
+     */
     private $codeStatus = [
         100 => 'Continue',
         101 => 'Switching Protocols',
-        200 => 'OK',
+        200 => 'No error',
         201 => 'Created',
         202 => 'Accepted',
         203 => 'Non-Authoritative Information',
