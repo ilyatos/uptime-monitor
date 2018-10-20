@@ -31,6 +31,7 @@ class CreateTables
                 alias VARCHAR (255),
                 url VARCHAR (255) NOT NULL UNIQUE,
                 token VARCHAR (255) NOT NULL UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
             ";
@@ -49,6 +50,7 @@ class CreateTables
             CREATE TABLE IF NOT EXISTS reasons (
                 id INT NOT NULL AUTO_INCREMENT,
                 reason VARCHAR (255) NOT NULL UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
             ";
@@ -71,6 +73,7 @@ class CreateTables
                 response_time TIME(3),
                 availability TINYINT (1),
                 reason_id INT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
                 FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
                 FOREIGN KEY (reason_id) REFERENCES reasons(id)
