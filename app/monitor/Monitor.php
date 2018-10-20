@@ -45,7 +45,7 @@ class Monitor
      * @param string $serviceUrl
      * @param string $serviceAlias
      */
-    private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias)
+    private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias): array
     {
         $checker = new RequestToService($serviceUrl);
 
@@ -71,20 +71,9 @@ class Monitor
             $codeName = 'Undefined situation';
         }
 
-        $result['reason_id'] = $this->getReasonId($codeName);
+        $result['reason_id'] = Reason::getReasonId($codeName);
 
         return $result;
-    }
-
-    private function getReasonId(string $checkedReason)
-    {
-        if (!Reason::existsWhere('reason', $checkedReason)) {
-            Reason::store(['reason' => $checkedReason]);
-        }
-
-        $reason = Reason::findOneWhere('reason', $checkedReason);
-
-        return $reason['id'];
     }
 
 }

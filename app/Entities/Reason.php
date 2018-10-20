@@ -15,4 +15,19 @@ class Reason extends BaseEntity
     {
         return 'reasons';
     }
+
+    /**
+     * @param string $reasonIn
+     * @return int
+     */
+    public static function getReasonId(string $reasonIn): int
+    {
+        if (!self::existsWhere('reason', $reasonIn)) {
+            self::store(['reason' => $reasonIn]);
+        }
+
+        $reasonOut = self::findOneWhere('reason', $reasonIn);
+
+        return $reasonOut['id'];
+    }
 }
