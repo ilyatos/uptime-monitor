@@ -2,6 +2,7 @@
 
 namespace Monitor;
 
+use App\Entities\Reason;
 use Monitor\Helpers\RequestToService;
 use App\Entities\Service;
 use App\Entities\Response;
@@ -30,10 +31,11 @@ class Monitor
      */
     public function run()
     {
-        $services = Service::all(['alias', 'url']);
+        $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            $this->checkService($service['id'], $service['url'], $service['alias']);
+            $response = $this->checkService($service['id'], $service['url'], $service['alias']);
+            Response::store($response);
         }
     }
 
@@ -48,12 +50,41 @@ class Monitor
         $checker = new RequestToService($serviceUrl);
 
         $responseCode = $checker->getResponseHttpCode();
+        $responseTime = $checker->getResponseTime();
+        $responseSize = $checker->getResponseSize();
+
+        $result = [
+            'service_id' => $serviceId,
+            'response_time' => $responseTime,
+            'response_size' => $responseSize,
+        ];
 
         if ($this->httpStatusCode->match($responseCode, 200)) {
-
+            $result['availability'] = 1;
         } else {
-
+            $result['availability'] = 0;
         }
+
+        try {
+            $codeName = $this->httpStatusCode->getCodeName($responseCode);
+        } catch (\Exception $e) {
+            $codeName = 'Undefined situation';
+        }
+
+        $result['reason_id'] = $this->getReasonId($codeName);
+
+        return $result;
+    }
+
+    private function getReasonId(string $checkedReason)
+    {
+        if (!Reason::existsWhere('reason', $checkedReason)) {
+            Reason::store(['reason' => $checkedReason]);
+        }
+
+        $reason = Reason::findOneWhere('reason', $checkedReason);
+
+        return $reason['id'];
     }
 
 }
