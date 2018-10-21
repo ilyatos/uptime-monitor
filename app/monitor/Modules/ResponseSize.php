@@ -17,7 +17,7 @@ class ResponseSize
     public function getSizeDifferenceAsReason(int $responseSize, array $storageSizes): string
     {
         if (empty($storageSizes)) {
-            throw new \Exception('There are no storageSizes.');
+            throw new \Exception('There are no storageSizes to analyse.');
         }
 
         $average = $this->calculateAverageBasedOnMax($storageSizes);
