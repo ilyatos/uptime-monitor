@@ -72,7 +72,11 @@ class Monitor
                 ['reason_id' => $noErrorId]
             ])->getAll(\PDO::FETCH_COLUMN);
 
-            $reason = $this->responseSizeModule->getSizeDifferenceAsReason($responseSize, $previousAvailableSizes);
+            try {
+                $reason = $this->responseSizeModule->getSizeDifferenceAsReason($responseSize, $previousAvailableSizes);
+            } catch (\Exception $e) {
+                $reason = 'No error';
+            }
         } else {
             $result['availability'] = 0;
 
