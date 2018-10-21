@@ -64,6 +64,7 @@ class Monitor
 
         if ($this->httpStatusCodeModule->match($responseCode, '2\d{2}')) {
             $result['availability'] = 1;
+            $reason = 'No error';
         } else {
             $result['availability'] = 0;
 
@@ -73,7 +74,6 @@ class Monitor
                 $reason = 'Undefined situation';
             }
         }
-
 
         $result['reason_id'] = Reason::getReasonId($reason);
 

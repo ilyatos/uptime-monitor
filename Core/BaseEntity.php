@@ -3,6 +3,7 @@
 namespace Core;
 
 use Core\Traits\DBConnectionTrait;
+use Core\Helpers\SqlHelper;
 
 abstract class BaseEntity
 {
@@ -11,24 +12,15 @@ abstract class BaseEntity
     abstract protected static function getTableName();
 
     /**
-     * Get one record with satisfied parameters.
+     * Get record with satisfied parameters.
      *
-     * @param string $column
-     * @param string $param
-     * @return mixed
+     * @return SqlHelper
      */
-    public static function findOneWhere(string $column, string $param)
+    public static function find()
     {
-        $connection = static::getConnection();
-
-        $query = $connection->prepare(sprintf("SELECT * FROM %s WHERE $column=:p LIMIT 1", static::getTableName()));
-
-        $query->bindParam(':p', $param);
-
-        $query->execute();
-
-        return $query->fetch();
+        return new SqlHelper(sprintf("SELECT * FROM %s ", static::getTableName()));
     }
+
 
     /**
      * Get columns as an array, if it is empty, than return all columns.
@@ -38,8 +30,6 @@ abstract class BaseEntity
      */
     public static function all(array $columns = [])
     {
-        $connection = self::getConnection();
-
         $sql = '';
 
         if (!empty($columns)) {
@@ -52,10 +42,9 @@ abstract class BaseEntity
 
         $sql = rtrim($sql, ',');
 
-        $stmt = $connection->prepare(sprintf("SELECT $sql FROM %s", static::getTableName()));
-        $stmt->execute();
+        $helper = new SqlHelper(sprintf("SELECT $sql FROM %s", static::getTableName()));
 
-        return $stmt->fetchAll();
+        return $helper->fetchAll();
     }
 
     /**
@@ -66,8 +55,6 @@ abstract class BaseEntity
      */
     public static function store(array $data)
     {
-        $connection = static::getConnection();
-
         $columns = '';
         $values = '';
 
@@ -79,9 +66,9 @@ abstract class BaseEntity
         $columns = rtrim($columns, ',');
         $values = rtrim($values, ',');
 
-        $query = $connection->prepare(sprintf("INSERT INTO %s ($columns) VALUES ($values)", static::getTableName()));
+        $helper = new SqlHelper(sprintf("INSERT INTO %s ($columns) VALUES ($values)", static::getTableName()));
 
-        return $query->execute();
+        return $helper->execute();
     }
 
     /**
