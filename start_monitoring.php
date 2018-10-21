@@ -12,10 +12,12 @@ require_once ROOT . '/vendor/autoload.php';
 set_exception_handler('Core\Error::exceptionHandler');
 
 /**
- * Dotenv supporting.
+ * Dotenv supports
  */
-$de = new Dotenv\Dotenv(ROOT);
-$de->load();
+if (file_exists(ROOT . '/.env')) {
+    $de = new Dotenv\Dotenv(ROOT);
+    $de->load();
+}
 
 $monitor = new Monitor();
 $monitor->run();
