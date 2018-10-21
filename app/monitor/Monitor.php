@@ -8,6 +8,7 @@ use App\Entities\Service;
 use App\Entities\Response;
 use Monitor\Helpers\BotNotification;
 use Monitor\Modules\HttpStatusCode;
+use Monitor\Modules\ResponseSize;
 
 
 class Monitor
@@ -15,7 +16,8 @@ class Monitor
     private $notificationBot;
     private $notificationMessage;
 
-    private $httpStatusCode;
+    private $httpStatusCodeModule;
+    private $responseSizeModule;
 
     /**
      * Boot modules.
@@ -23,7 +25,8 @@ class Monitor
     public function __construct()
     {
         $this->notificationBot = new BotNotification();
-        $this->httpStatusCode = new HttpStatusCode();
+        $this->httpStatusCodeModule = new HttpStatusCode();
+        $this->responseSizeModule = new ResponseSize();
     }
 
     /**
@@ -59,19 +62,20 @@ class Monitor
             'response_size' => $responseSize,
         ];
 
-        if ($this->httpStatusCode->match($responseCode, 200)) {
+        if ($this->httpStatusCodeModule->match($responseCode, 200)) {
             $result['availability'] = 1;
         } else {
             $result['availability'] = 0;
+
+            try {
+                $reason = $this->httpStatusCodeModule->getCodeName($responseCode);
+            } catch (\Exception $e) {
+                $reason = 'Undefined situation';
+            }
         }
 
-        try {
-            $codeName = $this->httpStatusCode->getCodeName($responseCode);
-        } catch (\Exception $e) {
-            $codeName = 'Undefined situation';
-        }
 
-        $result['reason_id'] = Reason::getReasonId($codeName);
+        $result['reason_id'] = Reason::getReasonId($reason);
 
         return $result;
     }
