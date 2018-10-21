@@ -21,7 +21,7 @@ class ResponseSize
         }
 
         $average = $this->calculateAverage($storageSizes);
-        echo $average;
+
         $diff = $this->calculatePercentageDiff($average, $responseSize);
 
         $comparative = $responseSize > $average ? 'bigger' : 'smaller';
