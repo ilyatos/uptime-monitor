@@ -26,7 +26,7 @@ class Reason extends BaseEntity
             self::store(['reason' => $reasonIn]);
         }
 
-        $reasonOut = self::find()->where([['reason' => $reasonIn]])->fetch();
+        $reasonOut = self::find()->where([['reason' => $reasonIn]])->get();
 
         return $reasonOut['id'];
     }
