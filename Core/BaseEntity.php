@@ -3,6 +3,7 @@
 namespace Core;
 
 use Core\Traits\DBConnectionTrait;
+use Core\Helpers\SQLBuilder;
 
 abstract class BaseEntity
 {
@@ -11,24 +12,15 @@ abstract class BaseEntity
     abstract protected static function getTableName();
 
     /**
-     * Get one record with satisfied parameters.
+     * Get record with satisfied parameters.
      *
-     * @param string $column
-     * @param string $param
-     * @return mixed
+     * @return SQLBuilder
      */
-    public static function findOneWhere(string $column, string $param)
+    public static function find()
     {
-        $connection = static::getConnection();
-
-        $query = $connection->prepare(sprintf("SELECT * FROM %s WHERE $column=:p LIMIT 1", static::getTableName()));
-
-        $query->bindParam(':p', $param);
-
-        $query->execute();
-
-        return $query->fetch();
+        return new SQLBuilder(sprintf("SELECT * FROM %s ", static::getTableName()));
     }
+
 
     /**
      * Get columns as an array, if it is empty, than return all columns.
@@ -36,10 +28,8 @@ abstract class BaseEntity
      * @param array $columns
      * @return array
      */
-    public static function all(array $columns = [])
+    public static function all(array $columns = []): array
     {
-        $connection = self::getConnection();
-
         $sql = '';
 
         if (!empty($columns)) {
@@ -52,10 +42,9 @@ abstract class BaseEntity
 
         $sql = rtrim($sql, ',');
 
-        $stmt = $connection->prepare(sprintf("SELECT $sql FROM %s", static::getTableName()));
-        $stmt->execute();
+        $helper = new SQLBuilder(sprintf("SELECT $sql FROM %s", static::getTableName()));
 
-        return $stmt->fetchAll();
+        return $helper->fetchAll();
     }
 
     /**
@@ -64,10 +53,8 @@ abstract class BaseEntity
      * @param array $data
      * @return bool
      */
-    public static function store(array $data)
+    public static function store(array $data): bool
     {
-        $connection = static::getConnection();
-
         $columns = '';
         $values = '';
 
@@ -79,23 +66,19 @@ abstract class BaseEntity
         $columns = rtrim($columns, ',');
         $values = rtrim($values, ',');
 
-        $query = $connection->prepare(sprintf("INSERT INTO %s ($columns) VALUES ($values)", static::getTableName()));
+        $helper = new SQLBuilder(sprintf("INSERT INTO %s ($columns) VALUES ($values)", static::getTableName()));
 
-        return $query->execute();
+        return $helper->execute();
     }
 
     /**
      * Update values in row, where column=param.
      *
      * @param array $updatedValues
-     * @param string $column
-     * @param string $param
      * @return bool
      */
-    public static function updateWhere(array $updatedValues, string $column, string $param)
+    public static function update(array $updatedValues): bool
     {
-        $connection = static::getConnection();
-
         $sql = '';
 
         foreach ($updatedValues as $key => $value) {
@@ -104,11 +87,9 @@ abstract class BaseEntity
 
         $sql = rtrim($sql, ',');
 
-        $query = $connection->prepare(sprintf("UPDATE %s SET $sql WHERE $column=:p", static::getTableName()));
+        $helper = new SQLBuilder(sprintf("UPDATE %s SET $sql", static::getTableName()));
 
-        $query->bindParam(':p', $param);
-
-        return $query->execute();
+        return $helper->execute();
     }
 
     /**
@@ -118,19 +99,13 @@ abstract class BaseEntity
      * @param string $param
      * @return bool
      */
-    public static function existsWhere(string $column, string $param)
+    public static function existsWhere(string $column, string $param): bool
     {
-        $connection = static::getConnection();
-
-        $query = $connection->prepare(sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE $column=:p) AS exist LIMIT 1",
+        $helper = new SQLBuilder(sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE $column='$param') AS exist",
             static::getTableName()));
 
-        $query->bindParam(':p', $param);
+        $fetched = $helper->limit(1)->fetch();
 
-        $query->execute();
-
-        $fetched = $query->fetch();
-
-        return $fetched['exist'] == 1 ? true : false;
+        return $fetched['exist'] == 1;
     }
 }
