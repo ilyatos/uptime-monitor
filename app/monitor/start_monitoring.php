@@ -1,15 +1,21 @@
 <?php
 
-define('ROOT', __DIR__ . '/../../');
+use Monitor\Monitor;
 
-require_once ROOT . 'vendor/autoload.php';
+define('ROOT', __DIR__ . '/../..');
+
+require_once ROOT . '/vendor/autoload.php';
 
 /**
  * Exception handling
  */
 set_exception_handler('Core\Error::exceptionHandler');
 
-use Monitor\Monitor;
+/**
+ * Dotenv supporting.
+ */
+$de = new Dotenv\Dotenv(ROOT);
+$de->load();
 
 $monitor = new Monitor();
 $monitor->run();

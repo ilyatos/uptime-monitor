@@ -6,7 +6,7 @@ define('ROOT', dirname(__DIR__));
 
 /**
  * Autoloader.
-*/
+ */
 require_once ROOT . '/vendor/autoload.php';
 
 /**
