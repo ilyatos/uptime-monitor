@@ -64,7 +64,15 @@ class Monitor
 
         if ($this->httpStatusCodeModule->match($responseCode, '2\d{2}')) {
             $result['availability'] = 1;
-            $reason = 'No error';
+
+            $noErrorId = Reason::getReasonId('No error');
+
+            $previousAvailableSizes = Response::find(['response_size'])->where([
+                ['service_id' => $serviceId, 'AND'],
+                ['reason_id' => $noErrorId]
+            ])->getAll(\PDO::FETCH_COLUMN);
+
+            $reason = $this->responseSizeModule->getSizeDifferenceAsReason($responseSize, $previousAvailableSizes);
         } else {
             $result['availability'] = 0;
 

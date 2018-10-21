@@ -89,7 +89,7 @@ class SQLBuilder
      *
      * @return array
      */
-    public function fetch(): array
+    public function get(): array
     {
         $this->execute();
         return $this->query->fetch();
@@ -100,9 +100,9 @@ class SQLBuilder
      *
      * @return array
      */
-    public function fetchAll(): array
+    public function getAll($fetchStyle = null): array
     {
         $this->execute();
-        return $this->query->fetchAll();
+        return $this->query->fetchAll($fetchStyle);
     }
 }
