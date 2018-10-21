@@ -17,14 +17,16 @@ class ResponseSize
     public function getSizeDifferenceAsReason(int $responseSize, array $storageSizes): string
     {
         if (empty($storageSizes)) {
-            throw new \Exception('There are no storageSizes to analyse.');
+            throw new \Exception('There are no enough sizes to analyse.');
         }
 
-        $average = $this->calculateAverageBasedOnMax($storageSizes);
-
+        $average = $this->calculateAverage($storageSizes);
+        echo $average;
         $diff = $this->calculatePercentageDiff($average, $responseSize);
 
-        $reason = $diff / 100 > 0.1 ? sprintf('Response size %u%% bigger', $diff) : 'No error';
+        $comparative = $responseSize > $average ? 'bigger' : 'smaller';
+
+        $reason = $diff / 100 > 0.1 ? sprintf('Response size %u%% %s', $diff, $comparative) : 'No error';
 
         return $reason;
     }
@@ -35,41 +37,24 @@ class ResponseSize
     }
 
     /**
-     * Returns the average size based on max size with error = 10%.
+     * Returns the average size.
      *
      * @param array $sizes
      * @return int
      */
-    private function calculateAverageBasedOnMax(array $sizes): int
+    private function calculateAverage(array $sizes): int
     {
-        $maxSize = max($sizes);
-
-        $sizes = array_filter($sizes, function ($size) use ($maxSize) {
-            return $size === $maxSize or ($maxSize - $maxSize * self::SIZE_ERROR) < $size;
-        });
-
-        return array_sum($sizes) / count($sizes);
-    }
-
-    /**
-     * Returns the average size based on multiply filtering with error = 10%.
-     *
-     * @param array $sizes
-     * @return int
-     */
-    private function calculateAverageBasedOnFiltering(array $sizes): int
-    {
-        $error = 0.4;
-
-        while ($error > self::SIZE_ERROR) {
-            $psAverage = array_sum($sizes) / count($sizes);
-
-            $sizes = array_filter($sizes, function ($size) use ($error, $psAverage) {
-                return $size > ($psAverage - $psAverage * $error);
-            });
-
-            $error -= 0.1;
-        }
+//        $error = 0.4;
+//
+//        while ($error > self::SIZE_ERROR) {
+//            $psAverage = array_sum($sizes) / count($sizes);
+//
+//            $sizes = array_filter($sizes, function ($size) use ($error, $psAverage) {
+//                return $size > ($psAverage - $psAverage * $error);
+//            });
+//
+//            $error -= 0.1;
+//        }
 
         return array_sum($sizes) / count($sizes);
     }
