@@ -1,5 +1,4 @@
 .idea
 Core/config/db.php
 /vendor
-composer.lock
 app/monitor/chek_services.php
