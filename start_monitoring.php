@@ -2,7 +2,7 @@
 
 use Monitor\Monitor;
 
-define('ROOT', __DIR__ . '/../..');
+define('ROOT', __DIR__);
 
 require_once ROOT . '/vendor/autoload.php';
 
