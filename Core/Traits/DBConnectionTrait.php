@@ -17,9 +17,6 @@ trait DBConnectionTrait
         static $connection;
 
         if ($connection === null) {
-
-            $config = require dirname(__DIR__) . '/config/db.php';
-
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
