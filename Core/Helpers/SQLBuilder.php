@@ -24,12 +24,17 @@ class SQLBuilder
      * @param array $whereStmt
      * @return SQLBuilder
      */
-    public function where(array $whereStmt): SQLBuilder
+    public function where(array $whereStmts): SQLBuilder
     {
-        $column = key($whereStmt);
-        $value = $whereStmt[$column];
+        $newSql = rtrim($this->sql) . " WHERE";
 
-        $newSql = rtrim($this->sql) . " WHERE $column='$value'";
+        foreach ($whereStmts as $where) {
+            $column = key($where);
+            $value = $where[$column];
+            $operator = $where[0] ?? '';
+
+            $newSql .= " $column='$value' $operator";
+        }
 
         return new SQLBuilder($newSql);
     }
