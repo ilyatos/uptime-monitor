@@ -11,7 +11,7 @@ class Response extends BaseEntity
      *
      * @return string
      */
-    static protected function getTableName()
+    protected static function getTableName()
     {
         return 'responses';
     }

@@ -2,7 +2,7 @@
 
 namespace Monitor\Helpers;
 
-final class CheckService
+final class RequestToService
 {
     private $ch;
     private $executionResult;

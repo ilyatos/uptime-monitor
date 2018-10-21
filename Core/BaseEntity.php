@@ -11,6 +11,26 @@ abstract class BaseEntity
     abstract protected static function getTableName();
 
     /**
+     * Get one record with satisfied parameters.
+     *
+     * @param string $column
+     * @param string $param
+     * @return mixed
+     */
+    public static function findOneWhere(string $column, string $param)
+    {
+        $connection = static::getConnection();
+
+        $query = $connection->prepare(sprintf("SELECT * FROM %s WHERE $column=:p LIMIT 1", static::getTableName()));
+
+        $query->bindParam(':p', $param);
+
+        $query->execute();
+
+        return $query->fetch();
+    }
+
+    /**
      * Get columns as an array, if it is empty, than return all columns.
      *
      * @param array $columns
@@ -32,7 +52,7 @@ abstract class BaseEntity
 
         $sql = rtrim($sql, ',');
 
-        $stmt = $connection->prepare("SELECT $sql FROM " . static::getTableName());
+        $stmt = $connection->prepare(sprintf("SELECT $sql FROM %s", static::getTableName()));
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -59,7 +79,7 @@ abstract class BaseEntity
         $columns = rtrim($columns, ',');
         $values = rtrim($values, ',');
 
-        $query = $connection->prepare("INSERT INTO " . static::getTableName() . " ($columns) VALUES ($values)");
+        $query = $connection->prepare(sprintf("INSERT INTO %s ($columns) VALUES ($values)", static::getTableName()));
 
         return $query->execute();
     }
@@ -84,10 +104,33 @@ abstract class BaseEntity
 
         $sql = rtrim($sql, ',');
 
-        $query = $connection->prepare("UPDATE ". static::getTableName() ." SET $sql WHERE $column=:p");
+        $query = $connection->prepare(sprintf("UPDATE %s SET $sql WHERE $column=:p", static::getTableName()));
 
         $query->bindParam(':p', $param);
 
         return $query->execute();
+    }
+
+    /**
+     * Check if record exists in a table.
+     *
+     * @param string $column
+     * @param string $param
+     * @return bool
+     */
+    public static function existsWhere(string $column, string $param)
+    {
+        $connection = static::getConnection();
+
+        $query = $connection->prepare(sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE $column=:p) AS exist LIMIT 1",
+            static::getTableName()));
+
+        $query->bindParam(':p', $param);
+
+        $query->execute();
+
+        $fetched = $query->fetch();
+
+        return $fetched['exist'] == 1 ? true : false;
     }
 }
