@@ -17,8 +17,10 @@ set_exception_handler('Core\Error::exceptionHandler');
 /**
  * Dotenv supporting.
  */
-$de = new Dotenv\Dotenv(ROOT);
-$de->load();
+if (file_exists(ROOT . '/.env')) {
+    $de = new Dotenv\Dotenv(ROOT);
+    $de->load();
+}
 
 /**
  * Routing.
