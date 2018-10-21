@@ -16,9 +16,13 @@ abstract class BaseEntity
      *
      * @return SQLBuilder
      */
-    public static function find()
+    public static function find(array $columns = []): SQLBuilder
     {
-        return new SQLBuilder(sprintf("SELECT * FROM %s ", static::getTableName()));
+        $selectColumns = self::parseColumns($columns);
+
+        $tableName = static::getTableName();
+
+        return new SQLBuilder("SELECT $selectColumns FROM $tableName ");
     }
 
 
@@ -30,21 +34,28 @@ abstract class BaseEntity
      */
     public static function all(array $columns = []): array
     {
-        $sql = '';
+        $selectColumns = self::parseColumns($columns);
 
+        $helper = new SQLBuilder(sprintf("SELECT %s FROM %s", $selectColumns, static::getTableName()));
+
+        return $helper->getAll();
+    }
+
+    /**
+     * Parse given columns
+     *
+     * @param array $columns
+     * @return string
+     */
+    private static function parseColumns(array $columns = []): string
+    {
         if (!empty($columns)) {
-            foreach ($columns as $column) {
-                $sql = $sql . $column . ',';
-            }
+            $selectColumns = implode(',', $columns);
         } else {
-            $sql = '*';
+            $selectColumns = '*';
         }
 
-        $sql = rtrim($sql, ',');
-
-        $helper = new SQLBuilder(sprintf("SELECT $sql FROM %s", static::getTableName()));
-
-        return $helper->fetchAll();
+        return $selectColumns;
     }
 
     /**
@@ -66,7 +77,7 @@ abstract class BaseEntity
         $columns = rtrim($columns, ',');
         $values = rtrim($values, ',');
 
-        $helper = new SQLBuilder(sprintf("INSERT INTO %s ($columns) VALUES ($values)", static::getTableName()));
+        $helper = new SQLBuilder("INSERT INTO " . static::getTableName() . " ($columns) VALUES ($values)");
 
         return $helper->execute();
     }
@@ -101,10 +112,9 @@ abstract class BaseEntity
      */
     public static function existsWhere(string $column, string $param): bool
     {
-        $helper = new SQLBuilder(sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE $column='$param') AS exist",
-            static::getTableName()));
+        $helper = new SQLBuilder("SELECT EXISTS(SELECT 1 FROM " . static::getTableName() . " WHERE $column='$param') AS exist");
 
-        $fetched = $helper->limit(1)->fetch();
+        $fetched = $helper->limit(1)->get();
 
         return $fetched['exist'] == 1;
     }
