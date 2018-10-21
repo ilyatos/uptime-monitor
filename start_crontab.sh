@@ -2,3 +2,5 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )" #script directory
 
+cd $DIR/app/monitor
+php start_monitoring.php
