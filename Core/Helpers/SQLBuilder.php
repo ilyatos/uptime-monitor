@@ -40,7 +40,7 @@ class SQLBuilder
     }
 
     /**
-     * Add LIMIt %limit to a sql.
+     * Add LIMIT limit to a sql.
      *
      * @param int $limit
      * @return SQLBuilder
@@ -48,6 +48,24 @@ class SQLBuilder
     public function limit(int $limit): SQLBuilder
     {
         $newSql = rtrim($this->sql) . " LIMIT $limit";
+
+        return new SQLBuilder($newSql);
+    }
+
+    /**
+     * Add ORDER BY column to a sql.
+     *
+     * @param string $column
+     * @param string $order
+     * @return SQLBuilder
+     */
+    public function orderBy(string $column, string $order): SQLBuilder
+    {
+        if ($order !== 'ASC' and $order !== 'DESC') {
+            throw new \Exception("ORDER BY order must be ASC or DESC, $order given instead");
+        }
+
+        $newSql = rtrim($this->sql) . " ORDER BY $column $order";
 
         return new SQLBuilder($newSql);
     }
