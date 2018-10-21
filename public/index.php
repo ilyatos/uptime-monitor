@@ -10,6 +10,11 @@ define('ROOT', dirname(__DIR__));
 require_once ROOT . '/vendor/autoload.php';
 
 /**
+ * Exception handling
+ */
+set_exception_handler('Core\Error::exceptionHandler');
+
+/**
  * Routing
  */
 require_once ROOT . '/vendor/pecee/simple-router/helpers.php';
