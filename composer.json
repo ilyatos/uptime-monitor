@@ -10,6 +10,7 @@
     "pecee/simple-router": "4.2.0.5",
     "ext-curl": "*",
     "ext-json": "*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "vlucas/phpdotenv": "^2.5"
   }
 }

@@ -27,10 +27,8 @@ trait DBConnectionTrait
 
             try {
                 $connection = new PDO(
-                    sprintf("mysql:dbname=%s; host=%s; charset=utf8", $config['name'], $config['host']),
-                    $config['user'],
-                    $config['password'],
-                    $options);
+                    sprintf("mysql:dbname=%s; host=%s; charset=utf8", getenv('DB_NAME'), getenv('DB_HOST')),
+                    getenv('DB_USER'), getenv('DB_PASSWORD'), $options);
             } catch (\PDOException $e) {
                 echo $e->getMessage();
                 die;

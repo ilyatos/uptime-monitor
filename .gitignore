@@ -2,3 +2,4 @@
 Core/config/db.php
 /vendor
 logs/
+.env
