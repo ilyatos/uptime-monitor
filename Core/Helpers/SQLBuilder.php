@@ -85,22 +85,38 @@ class SQLBuilder
     }
 
     /**
+     * Execute a sql query.
+     *
+     * @return int
+     */
+    public function executeWithRowCount() : int
+    {
+        $connection = self::getConnection();
+
+        $this->query = $connection->prepare($this->sql);
+
+        $this->query->execute();
+
+        return $this->query->rowCount();
+    }
+
+    /**
      * Return one record.
      *
-     * @return array
+     * @return array|null
      */
-    public function get(): array
+    public function get($fetchStyle = null)
     {
         $this->execute();
-        return $this->query->fetch();
+        return $this->query->fetch($fetchStyle);
     }
 
     /**
      * Return all records.
      *
-     * @return array
+     * @return array|null
      */
-    public function getAll($fetchStyle = null): array
+    public function getAll($fetchStyle = null)
     {
         $this->execute();
         return $this->query->fetchAll($fetchStyle);

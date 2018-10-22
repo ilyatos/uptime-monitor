@@ -30,7 +30,6 @@ class CreateTables
                 id INT NOT NULL AUTO_INCREMENT,
                 alias VARCHAR (255),
                 url VARCHAR (255) NOT NULL UNIQUE,
-                token VARCHAR (255) NOT NULL UNIQUE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

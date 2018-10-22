@@ -12,7 +12,7 @@ abstract class BaseEntity
     abstract protected static function getTableName();
 
     /**
-     * Get record with satisfied parameters.
+     * Get a record with satisfied parameters.
      *
      * @return SQLBuilder
      */
@@ -22,9 +22,20 @@ abstract class BaseEntity
 
         $tableName = static::getTableName();
 
-        return new SQLBuilder("SELECT $selectColumns FROM $tableName ");
+        return new SQLBuilder("SELECT $selectColumns FROM $tableName");
     }
 
+    /**
+     * Delete a record.
+     *
+     * @return SQLBuilder
+     */
+    public static function delete(): SQLBuilder
+    {
+        $tableName = static::getTableName();
+
+        return new SQLBuilder("DELETE FROM $tableName");
+    }
 
     /**
      * Get columns as an array, if it is empty, than return all columns.

@@ -4,6 +4,7 @@ namespace App\Database;
 
 use App\Entities\Reason;
 use App\Entities\Service;
+use Monitor\Monitor;
 
 class SeedTables
 {
@@ -20,17 +21,12 @@ class SeedTables
         ['alias' => 'Unreachable service', 'url' => 'https://unworks.com']
     ];
 
-    private static $reasonsSeeds = [
-        ['reason' => 'No error'],
-    ];
-
     /**
      * Run the seeders.
      */
     public static function run()
     {
         self::seedServicesTable();
-        self::seedReasonsTable();
     }
 
     /**
@@ -39,18 +35,12 @@ class SeedTables
     private static function seedServicesTable()
     {
         foreach (self::$servicesSeeds as $seed) {
-            $seed['token'] = bin2hex(random_bytes(10));
             Service::store($seed);
-        }
-    }
 
-    /**
-     * Seed the `reasons` table.
-     */
-    private static function seedReasonsTable()
-    {
-        foreach (self::$reasonsSeeds as $seed) {
-            Reason::store($seed);
+            $createdService = Service::find()->where([['url' => $seed['url']]])->get();
+
+            $monitorInstance = new Monitor();
+            $monitorInstance->runForOne($createdService);
         }
     }
 }
