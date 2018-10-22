@@ -32,14 +32,24 @@ class Monitor
     /**
      * The Monitor's runner.
      */
-    public function run()
+    public function run(): void
     {
-        $services = Service::all(['id', 'alias', 'url']);
+        if (empty($services)) {
+            $services = Service::all(['id', 'alias', 'url']);
+        }
 
         foreach ($services as $service) {
-            $serviceResponseData = $this->checkService($service['id'], $service['url'], $service['alias']);
-            Response::store($serviceResponseData);
+            $this->runForOne($service);
         }
+    }
+
+    /**
+     * The Monitor's runner for one service.
+     */
+    public function runForOne(array $service): void
+    {
+        $serviceResponseData = $this->checkService($service['id'], $service['url'], $service['alias']);
+        Response::store($serviceResponseData);
     }
 
     /**
