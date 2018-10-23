@@ -11,6 +11,8 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-pdo": "*",
-    "vlucas/phpdotenv": "^2.5"
+    "ext-mongodb": "*",
+    "vlucas/phpdotenv": "^2.5",
+    "mongodb/mongodb": "^1.4"
   }
 }
