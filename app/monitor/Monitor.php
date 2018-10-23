@@ -37,9 +37,7 @@ class Monitor
      */
     public function run(): void
     {
-        if (empty($services)) {
-            $services = Service::all(['id', 'alias', 'url']);
-        }
+        $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
             $this->runForOne($service);
@@ -48,6 +46,9 @@ class Monitor
 
     /**
      * The Monitor's runner for one service.
+     *
+     * @param array $service
+     * @return void
      */
     public function runForOne(array $service): void
     {
@@ -60,6 +61,7 @@ class Monitor
      *
      * @param string $serviceUrl
      * @param string $serviceAlias
+     * @return array
      */
     private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias): array
     {
