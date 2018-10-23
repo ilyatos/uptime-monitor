@@ -12,9 +12,9 @@ require_once ROOT . '/vendor/autoload.php';
 /**
  * Exception handling.
  */
-error_reporting(E_ALL);
-set_error_handler('Core\Error::errorHandler');
-set_exception_handler('Core\Error::exceptionHandler');
+//error_reporting(E_ALL);
+//set_error_handler('Core\Error::errorHandler');
+//set_exception_handler('Core\Error::exceptionHandler');
 
 /**
  * Dotenv supporting.
