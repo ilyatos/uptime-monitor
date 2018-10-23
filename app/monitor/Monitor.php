@@ -40,7 +40,14 @@ class Monitor
         $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            $this->runForOne($service);
+            //зашлушка
+            try {
+                $this->runForOne($service);
+            } catch (\Exception $e) {
+                echo "Exception occurs for service: " . $service['url'] . ' ' . $e->getMessage();
+                continue;
+            }
+
         }
     }
 
@@ -65,11 +72,12 @@ class Monitor
      */
     private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias): array
     {
-        $checker = new RequestToService($serviceUrl);
+        $requester = new RequestToService($serviceUrl);
+        $response = $requester->send();
 
-        $responseCode = $checker->getResponseHttpCode();
-        $responseTime = $checker->getResponseTime();
-        $responseSize = $checker->getResponseSize();
+        $responseCode = $response->getHttpCode();
+        $responseTime = $response->getTime();
+        $responseSize = $response->getSize();
 
         $result = [
             'service_id' => $serviceId,

@@ -2,11 +2,17 @@
 
 namespace Monitor\Helpers;
 
+use Monitor\Helpers\ResponseFromService;
+
 final class RequestToService
 {
     private $ch;
-    private $executionResult;
 
+    /**
+     * RequestToService constructor.
+     *
+     * @param $url
+     */
     public function __construct($url)
     {
         $this->ch = curl_init($url);
@@ -14,33 +20,21 @@ final class RequestToService
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($this->ch, CURLOPT_TIMEOUT,5);
-
-        $this->executionResult = $this->executeCh();
     }
 
-    private function executeCh() {
-        return curl_exec($this->ch);
+    /**
+     * Send request to an url.
+     *
+     * @return \Monitor\Helpers\ResponseFromService
+     */
+    public function send() {
+        $execResult = curl_exec($this->ch);
+
+        if (!$execResult) {
+            $curlError = curl_error($this->ch);
+            throw new \Exception("Curl execution failed: $curlError");
+        }
+
+        return new ResponseFromService($execResult, $this->ch);
     }
-
-    public function getExResult()
-    {
-        return $this->executionResult;
-    }
-
-    public function getResponseHttpCode()
-    {
-        return curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
-    }
-
-    public function getResponseTime()
-    {
-        return curl_getinfo($this->ch, CURLINFO_TOTAL_TIME);
-    }
-
-    public function getResponseSize()
-    {
-        return curl_getinfo($this->ch, CURLINFO_SIZE_DOWNLOAD);
-    }
-
-
 }
