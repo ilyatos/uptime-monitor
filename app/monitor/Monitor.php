@@ -9,6 +9,7 @@ use App\Entities\Response;
 use Monitor\Helpers\BotNotification;
 use Monitor\Modules\HttpStatusCode;
 use Monitor\Modules\ResponseSize;
+use Monitor\Modules\ResponseTime;
 
 
 class Monitor
@@ -18,6 +19,7 @@ class Monitor
 
     private $httpStatusCodeModule;
     private $responseSizeModule;
+    private $responseTimeModule;
 
     /**
      * Boot modules.
@@ -27,6 +29,7 @@ class Monitor
         $this->notificationBot = new BotNotification();
         $this->httpStatusCodeModule = new HttpStatusCode();
         $this->responseSizeModule = new ResponseSize();
+        $this->responseTimeModule = new ResponseTime();
     }
 
     /**
@@ -82,8 +85,18 @@ class Monitor
                 ['reason_id' => $noErrorId]
             ])->getAll(\PDO::FETCH_COLUMN);
 
+            $previousAvailableTime = Response::find(['response_time'])->where([
+                ['service_id' => $serviceId, 'AND'],
+                ['reason_id' => $noErrorId]
+            ])->getAll(\PDO::FETCH_COLUMN);
+
             try {
-                $reason = $this->responseSizeModule->getSizeDifferenceAsReason($responseSize, $previousAvailableSizes);
+                $reason = $this->responseTimeModule->getTimeDifferenceAsReason($responseTime, $previousAvailableTime);
+
+                if ($reason === 'No error') {
+                    $reason = $this->responseSizeModule->getSizeDifferenceAsReason($responseSize,
+                        $previousAvailableSizes);
+                }
             } catch (\Exception $e) {
                 $reason = 'No error';
             }
