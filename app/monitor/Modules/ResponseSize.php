@@ -44,18 +44,6 @@ class ResponseSize
      */
     private function calculateAverage(array $sizes): int
     {
-//        $error = 0.4;
-//
-//        while ($error > self::SIZE_ERROR) {
-//            $psAverage = array_sum($sizes) / count($sizes);
-//
-//            $sizes = array_filter($sizes, function ($size) use ($error, $psAverage) {
-//                return $size > ($psAverage - $psAverage * $error);
-//            });
-//
-//            $error -= 0.1;
-//        }
-
         return array_sum($sizes) / count($sizes);
     }
 }
