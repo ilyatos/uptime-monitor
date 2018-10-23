@@ -68,8 +68,8 @@ class CreateTables
             CREATE TABLE IF NOT EXISTS responses (
                 id INT NOT NULL AUTO_INCREMENT,
                 service_id INT NOT NULL,
-                response_size FLOAT COMMENT 'Bytes',
-                response_time TIME(3),
+                response_size INT(5) COMMENT 'Bytes',
+                response_time FLOAT(5,3),
                 availability TINYINT (1),
                 reason_id INT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
