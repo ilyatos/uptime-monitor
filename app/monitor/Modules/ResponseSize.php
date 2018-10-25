@@ -2,9 +2,23 @@
 
 namespace Monitor\Modules;
 
+use Monitor\Helpers\ResponseFromService;
+
 class ResponseSize
 {
     const SIZE_ERROR = 0.1;
+
+    private $response;
+
+    /**
+     * ResponseSize constructor.
+     *
+     * @param ResponseFromService $response
+     */
+    public function __construct(ResponseFromService $response)
+    {
+        $this->response = $response;
+    }
 
     /**
      * Return the change size reason.
@@ -12,25 +26,31 @@ class ResponseSize
      * @param int $responseSize
      * @param array $storageSizes
      * @return string
-     * @throws \Exception
      */
-    public function getSizeDifferenceAsReason(int $responseSize, array $storageSizes): string
+    public function getSizeDifferenceAsReason(array $storageSizes): string
     {
         if (empty($storageSizes)) {
-            throw new \Exception('There are no enough sizes to analyse.');
+            return 'No error';
         }
 
         $average = $this->calculateAverage($storageSizes);
 
-        $diff = $this->calculatePercentageDiff($average, $responseSize);
+        $diff = $this->calculatePercentageDiff($average, $this->response->getSize());
 
-        $comparative = $responseSize > $average ? 'bigger' : 'smaller';
+        $comparative = $this->response->getSize() > $average ? 'bigger' : 'smaller';
 
         $reason = $diff / 100 > 0.1 ? sprintf('Response size %u%% %s', $diff, $comparative) : 'No error';
 
         return $reason;
     }
 
+    /**
+     * Return the difference in percentage.
+     *
+     * @param int $a
+     * @param int $b
+     * @return int
+     */
     private function calculatePercentageDiff(int $a, int $b): int
     {
         return abs(($a - $b) / ($a)) * 100;

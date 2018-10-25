@@ -2,8 +2,12 @@
 
 namespace Monitor\Modules;
 
+use Monitor\Helpers\ResponseFromService;
+
 class HttpStatusCode
 {
+    private $response;
+
     /**
      * http_code => header_like_value
      *
@@ -53,15 +57,25 @@ class HttpStatusCode
     ];
 
     /**
-     * Match $compared to code.
+     * HttpStatusCode constructor.
+     *
+     * @param ResponseFromService $response
+     */
+    public function __construct(ResponseFromService $response)
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * Match compared value to code.
      *
      * @param $code
      * @param $matched
      * @return bool
      */
-    public function match(string $compared, string $pattern)
+    public function match(string $pattern)
     {
-        return preg_match('/' . $pattern . '/', $compared) ? true : false;
+        return preg_match('/' . $pattern . '/', $this->response->getHttpCode()) ? true : false;
     }
 
     /**
@@ -70,12 +84,12 @@ class HttpStatusCode
      * @param int $code
      * @return string
      */
-    public function getCodeName(int $code)
+    public function getCodeName()
     {
-        if (array_key_exists($code, $this->codeStatus)) {
-            return $this->codeStatus[$code];
-        } else {
-            throw new \Exception("HTTP Code $code doesn't exist.");
+        if (!array_key_exists($this->response->getHttpCode(), $this->codeStatus)) {
+            return 'There is no correct HTTP code.';
         }
+
+        return $this->codeStatus[$this->response->getHttpCode()];
     }
 }
