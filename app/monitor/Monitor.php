@@ -15,6 +15,7 @@ class Monitor
 {
     const NO_ERROR_REASON = 'No error';
 
+    private $requestToService;
     private $notificationBot;
     private $notificationMessage;
 
@@ -24,6 +25,7 @@ class Monitor
     public function __construct()
     {
         $this->notificationBot = new BotNotification();
+        $this->requestToService = new RequestToService();
     }
 
     /**
@@ -34,7 +36,7 @@ class Monitor
         $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            //зашлушка
+            //temporary solution
             try {
                 $this->runForOne($service);
             } catch (\Exception $e) {
@@ -66,8 +68,7 @@ class Monitor
      */
     private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias): array
     {
-        $requester = new RequestToService($serviceUrl);
-        $response = $requester->send();
+        $response = $this->requestToService->send($serviceUrl);
 
         $httpStatusCodeModule = new HttpStatusCode($response);
         $responseSizeModule = new ResponseSize($response);
