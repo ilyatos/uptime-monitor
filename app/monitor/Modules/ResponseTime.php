@@ -2,35 +2,62 @@
 
 namespace Monitor\Modules;
 
+use Monitor\Helpers\ResponseFromService;
+
 class ResponseTime
 {
+    const NO_ERROR_REASON = 'No error';
     const TIME_ERROR = 0.2;
 
+    private $response;
+
     /**
-     * Return the change size reason.
+     * ResponseTime constructor.
+     *
+     * @param ResponseFromService $response
+     */
+    public function __construct(ResponseFromService $response)
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * Returns the change size reason.
      *
      * @param int $responseSize
      * @param array $storageSizes
+     *
      * @return string
      */
-    public function getTimeDifferenceAsReason(float $responseTime, array $storageTime): string
+    public function getTimeDifferenceAsReason(array $storageTime): string
     {
         if (empty($storageTime)) {
-            throw new \Exception('There are no enough sizes to analyse.');
+            return self::NO_ERROR_REASON;
         }
 
         $average = $this->calculateAverage($storageTime);
 
-        $diff = $this->calculatePercentageDiff($average, $responseTime);
+        $diff = $this->calculatePercentageDiff($average, $this->response->getTime());
 
-        $comparative = $responseTime > $average ? 'longer' : 'faster';
+        $comparative = $this->response->getTime() > $average ? 'longer' : 'faster';
 
-        $reason = $diff / 100 > self::TIME_ERROR ? sprintf('Response time %u%% %s', $diff, $comparative) : 'No error';
+        $reason = $diff / 100 > self::TIME_ERROR ? sprintf(
+            'Response time %u%% %s',
+            $diff,
+            $comparative
+        ) : self::NO_ERROR_REASON;
 
         return $reason;
-
     }
 
+    /**
+     * Return the difference in percentage.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return int
+     */
     private function calculatePercentageDiff(float $a, float $b): int
     {
         return abs(($a - $b) / ($a)) * 100;
@@ -39,8 +66,9 @@ class ResponseTime
     /**
      * Returns the average time.
      *
-     * @param array $times
-     * @return
+     * @param array $time
+     *
+     * @return float
      */
     private function calculateAverage(array $time): float
     {

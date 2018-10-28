@@ -22,6 +22,7 @@ class SQLBuilder
      * Add where clause to a sql.
      *
      * @param array $whereStmt
+     *
      * @return SQLBuilder
      */
     public function where(array $whereStmts): SQLBuilder
@@ -43,6 +44,7 @@ class SQLBuilder
      * Add LIMIT limit to a sql.
      *
      * @param int $limit
+     *
      * @return SQLBuilder
      */
     public function limit(int $limit): SQLBuilder
@@ -57,6 +59,7 @@ class SQLBuilder
      *
      * @param string $column
      * @param string $order
+     *
      * @return SQLBuilder
      */
     public function orderBy(string $column, string $order): SQLBuilder
@@ -89,7 +92,7 @@ class SQLBuilder
      *
      * @return int
      */
-    public function executeWithRowCount() : int
+    public function executeWithRowCount(): int
     {
         $connection = self::getConnection();
 
@@ -103,22 +106,28 @@ class SQLBuilder
     /**
      * Return one record.
      *
+     * @param null|mixed $fetchStyle
+     *
      * @return array|null
      */
     public function get($fetchStyle = null)
     {
         $this->execute();
+
         return $this->query->fetch($fetchStyle);
     }
 
     /**
      * Return all records.
      *
+     * @param null|mixed $fetchStyle
+     *
      * @return array|null
      */
     public function getAll($fetchStyle = null)
     {
         $this->execute();
+
         return $this->query->fetchAll($fetchStyle);
     }
 }

@@ -18,9 +18,10 @@ class Reason extends BaseEntity
 
     /**
      * @param string $reasonIn
+     *
      * @return int
      */
-    public static function getReasonId(string $reasonIn): int
+    public static function findOrCreateReasonId(string $reasonIn): int
     {
         if (!self::existsWhere('reason', $reasonIn)) {
             self::store(['reason' => $reasonIn]);

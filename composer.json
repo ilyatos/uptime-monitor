@@ -11,8 +11,12 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-pdo": "*",
-    "ext-mongodb": "*",
-    "vlucas/phpdotenv": "^2.5",
-    "mongodb/mongodb": "^1.4"
+    "vlucas/phpdotenv": "^2.5"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.13"
+  },
+  "scripts": {
+    "csfix": "vendor/bin/php-cs-fixer fix --verbose"
   }
 }

@@ -12,8 +12,6 @@ final class BotNotification
 
     /**
      * BotNotification constructor with curl initialisation.
-     *
-     * @param string $url
      */
     public function __construct()
     {
@@ -24,12 +22,14 @@ final class BotNotification
      * Send a message to initialised url.
      *
      * @param string $massage
+     *
      * @return bool
      */
-    public function sendMessage(string $messsage)
+    public function sendMessage(string $messsage): bool
     {
         curl_setopt($this->ch, CURLOPT_POST, true);
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query(['message' => $messsage]));
+
         return curl_exec($this->ch);
     }
 
@@ -37,9 +37,10 @@ final class BotNotification
      * Send a warning message.
      *
      * @param string $message
+     *
      * @return bool
      */
-    public function sendWarning(string $message)
+    public function sendWarning(string $message): bool
     {
         return $this->sendMessage(self::EMOJI_WARNING . $message);
     }
@@ -48,9 +49,10 @@ final class BotNotification
      * Send an error message.
      *
      * @param string $message
+     *
      * @return bool
      */
-    public function sendError(string $message)
+    public function sendError(string $message): bool
     {
         return $this->sendMessage(self::EMOJI_ERROR . $message);
     }

@@ -3,23 +3,21 @@
 namespace Monitor;
 
 use App\Entities\Reason;
-use Monitor\Helpers\RequestToService;
-use App\Entities\Service;
 use App\Entities\Response;
+use App\Entities\Service;
 use Monitor\Helpers\BotNotification;
+use Monitor\Helpers\RequestToService;
 use Monitor\Modules\HttpStatusCode;
 use Monitor\Modules\ResponseSize;
 use Monitor\Modules\ResponseTime;
 
-
 class Monitor
 {
+    const NO_ERROR_REASON = 'No error';
+
+    private $requestToService;
     private $notificationBot;
     private $notificationMessage;
-
-    private $httpStatusCodeModule;
-    private $responseSizeModule;
-    private $responseTimeModule;
 
     /**
      * Boot modules.
@@ -27,9 +25,7 @@ class Monitor
     public function __construct()
     {
         $this->notificationBot = new BotNotification();
-        $this->httpStatusCodeModule = new HttpStatusCode();
-        $this->responseSizeModule = new ResponseSize();
-        $this->responseTimeModule = new ResponseTime();
+        $this->requestToService = new RequestToService();
     }
 
     /**
@@ -40,14 +36,13 @@ class Monitor
         $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            //зашлушка
+            //temporary solution
             try {
                 $this->runForOne($service);
             } catch (\Exception $e) {
                 echo "Exception occurs for service: " . $service['url'] . ' ' . $e->getMessage();
                 continue;
             }
-
         }
     }
 
@@ -55,7 +50,6 @@ class Monitor
      * The Monitor's runner for one service.
      *
      * @param array $service
-     * @return void
      */
     public function runForOne(array $service): void
     {
@@ -66,29 +60,30 @@ class Monitor
     /**
      * Check if service is available or not.
      *
+     * @param int $serviceId
      * @param string $serviceUrl
      * @param string $serviceAlias
+     *
      * @return array
      */
     private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias): array
     {
-        $requester = new RequestToService($serviceUrl);
-        $response = $requester->send();
+        $response = $this->requestToService->send($serviceUrl);
 
-        $responseCode = $response->getHttpCode();
-        $responseTime = $response->getTime();
-        $responseSize = $response->getSize();
+        $httpStatusCodeModule = new HttpStatusCode($response);
+        $responseSizeModule = new ResponseSize($response);
+        $responseTimeModule = new ResponseTime($response);
 
         $result = [
             'service_id' => $serviceId,
-            'response_time' => $responseTime,
-            'response_size' => $responseSize,
+            'response_time' => $response->getTime(),
+            'response_size' => $response->getSize(),
         ];
 
-        if ($this->httpStatusCodeModule->match($responseCode, '2\d{2}')) {
+        if ($httpStatusCodeModule->match('^2\d{2}$')) {
             $result['availability'] = 1;
 
-            $noErrorId = Reason::getReasonId('No error');
+            $noErrorId = Reason::findOrCreateReasonId(self::NO_ERROR_REASON);
 
             $previousAvailableSizes = Response::find(['response_size'])->where([
                 ['service_id' => $serviceId, 'AND'],
@@ -100,29 +95,32 @@ class Monitor
                 ['reason_id' => $noErrorId]
             ])->getAll(\PDO::FETCH_COLUMN);
 
-            try {
-                $reason = $this->responseTimeModule->getTimeDifferenceAsReason($responseTime, $previousAvailableTime);
+            $timeReason = $responseTimeModule->getTimeDifferenceAsReason($previousAvailableTime);
+            $sizeReason = $responseSizeModule->getSizeDifferenceAsReason($previousAvailableSizes);
 
-                if ($reason === 'No error') {
-                    $reason = $this->responseSizeModule->getSizeDifferenceAsReason($responseSize,
-                        $previousAvailableSizes);
-                }
-            } catch (\Exception $e) {
-                $reason = 'No error';
-            }
+            $reason = $this->getFinalReason($timeReason, $sizeReason);
         } else {
             $result['availability'] = 0;
 
-            try {
-                $reason = $this->httpStatusCodeModule->getCodeName($responseCode);
-            } catch (\Exception $e) {
-                $reason = 'Undefined situation';
-            }
+            $reason = $httpStatusCodeModule->getCodeName();
         }
 
-        $result['reason_id'] = Reason::getReasonId($reason);
+        $result['reason_id'] = Reason::findOrCreateReasonId($reason);
 
         return $result;
     }
 
+    /**
+     * @param mixed ...$reasons
+     *
+     * @return string
+     */
+    private function getFinalReason(...$reasons): string
+    {
+        $reasons = array_filter($reasons, function ($reason) {
+            return $reason != self::NO_ERROR_REASON;
+        });
+
+        return empty($reasons) ? self::NO_ERROR_REASON : implode(',', $reasons);
+    }
 }

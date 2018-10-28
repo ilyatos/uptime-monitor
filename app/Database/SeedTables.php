@@ -2,7 +2,6 @@
 
 namespace App\Database;
 
-use App\Entities\Reason;
 use App\Entities\Service;
 use Monitor\Monitor;
 

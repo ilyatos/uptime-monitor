@@ -3,13 +3,13 @@
 
 namespace App\Http;
 
-
 class ApiResponse
 {
     /**
      * Return data as json
      *
      * @param array $responseData
+     *
      * @return string
      */
     public static function json($responseData)
@@ -30,6 +30,9 @@ class ApiResponse
      * Return data as json with success
      *
      * @param array $data
+     * @param mixed $code
+     * @param mixed $headers
+     *
      * @return string
      */
     public static function success($code, $data = null, $headers = [])
@@ -48,6 +51,9 @@ class ApiResponse
      * Return data as json with success error
      *
      * @param array $data
+     * @param mixed $code
+     * @param mixed $headers
+     *
      * @return string
      */
     public static function error($code, $data = null, $headers = [])
@@ -61,5 +67,4 @@ class ApiResponse
 
         return self::json($data);
     }
-
 }

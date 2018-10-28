@@ -3,3 +3,4 @@ Core/config/db.php
 /vendor
 logs/
 .env
+.php_cs.cache
