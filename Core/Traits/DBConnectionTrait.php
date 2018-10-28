@@ -6,7 +6,6 @@ use PDO;
 
 trait DBConnectionTrait
 {
-
     /**
      * Get the PDO database connection.
      *
@@ -18,7 +17,7 @@ trait DBConnectionTrait
 
         if ($connection === null) {
             $options = [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ];
 

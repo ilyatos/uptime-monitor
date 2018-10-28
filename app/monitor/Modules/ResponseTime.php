@@ -26,6 +26,7 @@ class ResponseTime
      *
      * @param int $responseSize
      * @param array $storageSizes
+     *
      * @return string
      */
     public function getTimeDifferenceAsReason(array $storageTime): string
@@ -54,6 +55,7 @@ class ResponseTime
      *
      * @param float $a
      * @param float $b
+     *
      * @return int
      */
     private function calculatePercentageDiff(float $a, float $b): int
@@ -65,6 +67,7 @@ class ResponseTime
      * Returns the average time.
      *
      * @param array $time
+     *
      * @return float
      */
     private function calculateAverage(array $time): float

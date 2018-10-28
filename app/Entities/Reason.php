@@ -18,6 +18,7 @@ class Reason extends BaseEntity
 
     /**
      * @param string $reasonIn
+     *
      * @return int
      */
     public static function findOrCreateReasonId(string $reasonIn): int

@@ -14,7 +14,6 @@ class Error
      *
      * @throws \ErrorException
      *
-     * @return void
      */
     public static function errorHandler($level, $message, $file, $line)
     {
@@ -28,7 +27,6 @@ class Error
      *
      * @param \Exception $exception The exception
      *
-     * @return void
      */
     public static function exceptionHandler($exception)
     {

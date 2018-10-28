@@ -25,6 +25,7 @@ class ResponseSize
      * Return the change size reason.
      *
      * @param array $storageSizes
+     *
      * @return string
      */
     public function getSizeDifferenceAsReason(array $storageSizes): string
@@ -53,6 +54,7 @@ class ResponseSize
      *
      * @param int $a
      * @param int $b
+     *
      * @return int
      */
     private function calculatePercentageDiff(int $a, int $b): int
@@ -64,6 +66,7 @@ class ResponseSize
      * Returns the average size.
      *
      * @param array $sizes
+     *
      * @return int
      */
     private function calculateAverage(array $sizes): int

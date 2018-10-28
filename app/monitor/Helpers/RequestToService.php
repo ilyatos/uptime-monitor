@@ -22,7 +22,9 @@ final class RequestToService
      * Send request to an url.
      *
      * @param string $url
+     *
      * @throws \Exception
+     *
      * @return \Monitor\Helpers\ResponseFromService
      */
     public function send(string $url): ResponseFromService

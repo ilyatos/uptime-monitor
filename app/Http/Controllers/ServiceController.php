@@ -71,6 +71,7 @@ class ServiceController
      * Delete the given service by $id.
      *
      * @param int $id
+     *
      * @return string
      */
     public function delete(int $id)

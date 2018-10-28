@@ -2,8 +2,8 @@
 
 namespace Core;
 
-use Core\Traits\DBConnectionTrait;
 use Core\Helpers\SQLBuilder;
+use Core\Traits\DBConnectionTrait;
 
 abstract class BaseEntity
 {
@@ -41,6 +41,7 @@ abstract class BaseEntity
      * Get columns as an array, if it is empty, than return all columns.
      *
      * @param array $columns
+     *
      * @return array
      */
     public static function all(array $columns = []): array
@@ -56,6 +57,7 @@ abstract class BaseEntity
      * Parse given columns
      *
      * @param array $columns
+     *
      * @return string
      */
     private static function parseColumns(array $columns = []): string
@@ -73,6 +75,7 @@ abstract class BaseEntity
      * Add a row into the database.
      *
      * @param array $data
+     *
      * @return bool
      */
     public static function store(array $data): bool
@@ -97,6 +100,7 @@ abstract class BaseEntity
      * Update values in row, where column=param.
      *
      * @param array $updatedValues
+     *
      * @return bool
      */
     public static function update(array $updatedValues): bool
@@ -119,6 +123,7 @@ abstract class BaseEntity
      *
      * @param string $column
      * @param string $param
+     *
      * @return bool
      */
     public static function existsWhere(string $column, string $param): bool

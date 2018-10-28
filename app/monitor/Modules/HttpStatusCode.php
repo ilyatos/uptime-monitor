@@ -72,6 +72,7 @@ class HttpStatusCode
      * Match compared value to code.
      *
      * @param string $pattern
+     *
      * @return bool
      */
     public function match(string $pattern): bool

@@ -3,10 +3,10 @@
 namespace Monitor;
 
 use App\Entities\Reason;
-use Monitor\Helpers\RequestToService;
-use App\Entities\Service;
 use App\Entities\Response;
+use App\Entities\Service;
 use Monitor\Helpers\BotNotification;
+use Monitor\Helpers\RequestToService;
 use Monitor\Modules\HttpStatusCode;
 use Monitor\Modules\ResponseSize;
 use Monitor\Modules\ResponseTime;
@@ -50,7 +50,6 @@ class Monitor
      * The Monitor's runner for one service.
      *
      * @param array $service
-     * @return void
      */
     public function runForOne(array $service): void
     {
@@ -64,6 +63,7 @@ class Monitor
      * @param int $serviceId
      * @param string $serviceUrl
      * @param string $serviceAlias
+     *
      * @return array
      */
     private function checkService(int $serviceId, string $serviceUrl, string $serviceAlias): array
@@ -112,6 +112,7 @@ class Monitor
 
     /**
      * @param mixed ...$reasons
+     *
      * @return string
      */
     private function getFinalReason(...$reasons): string
