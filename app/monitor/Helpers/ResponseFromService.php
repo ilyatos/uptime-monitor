@@ -3,7 +3,6 @@
 
 namespace Monitor\Helpers;
 
-
 class ResponseFromService
 {
     private $executionResult;

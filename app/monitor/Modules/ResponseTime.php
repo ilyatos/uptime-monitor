@@ -40,11 +40,13 @@ class ResponseTime
 
         $comparative = $this->response->getTime() > $average ? 'longer' : 'faster';
 
-        $reason = $diff / 100 > self::TIME_ERROR ? sprintf('Response time %u%% %s', $diff,
-            $comparative) : self::NO_ERROR_REASON;
+        $reason = $diff / 100 > self::TIME_ERROR ? sprintf(
+            'Response time %u%% %s',
+            $diff,
+            $comparative
+        ) : self::NO_ERROR_REASON;
 
         return $reason;
-
     }
 
     /**

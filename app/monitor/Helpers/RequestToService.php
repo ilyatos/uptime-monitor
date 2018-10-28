@@ -16,13 +16,14 @@ final class RequestToService
         $this->ch = curl_init($url);
 
         curl_setopt($this->ch, CURLOPT_HEADER, true);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER,1);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT,5);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, 5);
     }
 
     /**
      * Send request to an url.
      *
+     * @throws \Exception
      * @return \Monitor\Helpers\ResponseFromService
      */
     public function send(): ResponseFromService

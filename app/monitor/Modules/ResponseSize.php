@@ -39,8 +39,11 @@ class ResponseSize
 
         $comparative = $this->response->getSize() > $average ? 'bigger' : 'smaller';
 
-        $reason = $diff / 100 > self::SIZE_ERROR ? sprintf('Response size %u%% %s', $diff,
-            $comparative) : self::NO_ERROR_REASON;
+        $reason = $diff / 100 > self::SIZE_ERROR ? sprintf(
+            'Response size %u%% %s',
+            $diff,
+            $comparative
+        ) : self::NO_ERROR_REASON;
 
         return $reason;
     }

@@ -3,7 +3,6 @@
 
 namespace App\Http;
 
-
 class ApiResponse
 {
     /**
@@ -61,5 +60,4 @@ class ApiResponse
 
         return self::json($data);
     }
-
 }
