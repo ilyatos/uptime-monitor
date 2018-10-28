@@ -11,9 +11,10 @@ use Monitor\Modules\HttpStatusCode;
 use Monitor\Modules\ResponseSize;
 use Monitor\Modules\ResponseTime;
 
-
 class Monitor
 {
+    const NO_ERROR_REASON = 'No error';
+
     private $notificationBot;
     private $notificationMessage;
 
@@ -40,7 +41,6 @@ class Monitor
                 echo "Exception occurs for service: " . $service['url'] . ' ' . $e->getMessage();
                 continue;
             }
-
         }
     }
 
@@ -59,6 +59,7 @@ class Monitor
     /**
      * Check if service is available or not.
      *
+     * @param int $serviceId
      * @param string $serviceUrl
      * @param string $serviceAlias
      * @return array
@@ -78,10 +79,10 @@ class Monitor
             'response_size' => $response->getSize(),
         ];
 
-        if ($httpStatusCodeModule->match('2\d{2}')) {
+        if ($httpStatusCodeModule->match('^2\d{2}$')) {
             $result['availability'] = 1;
 
-            $noErrorId = Reason::findOrCreateReasonId('No error');
+            $noErrorId = Reason::findOrCreateReasonId(self::NO_ERROR_REASON);
 
             $previousAvailableSizes = Response::find(['response_size'])->where([
                 ['service_id' => $serviceId, 'AND'],
@@ -115,9 +116,9 @@ class Monitor
     private function getFinalReason(...$reasons): string
     {
         $reasons = array_filter($reasons, function ($reason) {
-            return $reason != 'No error';
+            return $reason != self::NO_ERROR_REASON;
         });
 
-        return empty($reasons) ? 'No error' : implode(',', $reasons);
+        return empty($reasons) ? self::NO_ERROR_REASON : implode(',', $reasons);
     }
 }

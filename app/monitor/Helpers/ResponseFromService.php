@@ -9,6 +9,12 @@ class ResponseFromService
     private $executionResult;
     private $executedCurl;
 
+    /**
+     * ResponseFromService constructor.
+     *
+     * @param string $executionResult
+     * @param $executedCurl
+     */
     public function __construct($executionResult, $executedCurl)
     {
         $this->executionResult = $executionResult;

@@ -2,8 +2,6 @@
 
 namespace Monitor\Helpers;
 
-use Monitor\Helpers\ResponseFromService;
-
 final class RequestToService
 {
     private $ch;
@@ -27,7 +25,8 @@ final class RequestToService
      *
      * @return \Monitor\Helpers\ResponseFromService
      */
-    public function send() {
+    public function send(): ResponseFromService
+    {
         $execResult = curl_exec($this->ch);
 
         if (!$execResult) {

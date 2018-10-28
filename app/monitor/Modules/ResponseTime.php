@@ -6,6 +6,7 @@ use Monitor\Helpers\ResponseFromService;
 
 class ResponseTime
 {
+    const NO_ERROR_REASON = 'No error';
     const TIME_ERROR = 0.2;
 
     private $response;
@@ -21,7 +22,7 @@ class ResponseTime
     }
 
     /**
-     * Return the change size reason.
+     * Returns the change size reason.
      *
      * @param int $responseSize
      * @param array $storageSizes
@@ -30,7 +31,7 @@ class ResponseTime
     public function getTimeDifferenceAsReason(array $storageTime): string
     {
         if (empty($storageTime)) {
-            return 'No error';
+            return self::NO_ERROR_REASON;
         }
 
         $average = $this->calculateAverage($storageTime);
@@ -39,7 +40,8 @@ class ResponseTime
 
         $comparative = $this->response->getTime() > $average ? 'longer' : 'faster';
 
-        $reason = $diff / 100 > self::TIME_ERROR ? sprintf('Response time %u%% %s', $diff, $comparative) : 'No error';
+        $reason = $diff / 100 > self::TIME_ERROR ? sprintf('Response time %u%% %s', $diff,
+            $comparative) : self::NO_ERROR_REASON;
 
         return $reason;
 
@@ -60,8 +62,8 @@ class ResponseTime
     /**
      * Returns the average time.
      *
-     * @param array $times
-     * @return
+     * @param array $time
+     * @return float
      */
     private function calculateAverage(array $time): float
     {

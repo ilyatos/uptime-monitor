@@ -6,6 +6,7 @@ use Monitor\Helpers\ResponseFromService;
 
 class ResponseSize
 {
+    const NO_ERROR_REASON = 'No error';
     const SIZE_ERROR = 0.1;
 
     private $response;
@@ -23,14 +24,13 @@ class ResponseSize
     /**
      * Return the change size reason.
      *
-     * @param int $responseSize
      * @param array $storageSizes
      * @return string
      */
     public function getSizeDifferenceAsReason(array $storageSizes): string
     {
         if (empty($storageSizes)) {
-            return 'No error';
+            return self::NO_ERROR_REASON;
         }
 
         $average = $this->calculateAverage($storageSizes);
@@ -39,7 +39,8 @@ class ResponseSize
 
         $comparative = $this->response->getSize() > $average ? 'bigger' : 'smaller';
 
-        $reason = $diff / 100 > 0.1 ? sprintf('Response size %u%% %s', $diff, $comparative) : 'No error';
+        $reason = $diff / 100 > self::SIZE_ERROR ? sprintf('Response size %u%% %s', $diff,
+            $comparative) : self::NO_ERROR_REASON;
 
         return $reason;
     }
