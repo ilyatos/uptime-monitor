@@ -2,58 +2,58 @@
 
 namespace Monitor\Helpers;
 
+use PhpParser\Node\Arg;
+
 final class BotNotification
 {
-    const BOT_URL = 'https://notify.bot.ifmo.su/u/NLD3L8DR';
     const EMOJI_WARNING = "\u{26A0}";
     const EMOJI_ERROR = "\u{1F6D1}";
 
     private $ch;
+    private $message = '';
 
     /**
      * BotNotification constructor with curl initialisation.
      */
     public function __construct()
     {
-        $this->ch = curl_init(self::BOT_URL);
+        $this->ch = curl_init(getenv('BOT_URL'));
     }
 
     /**
-     * Send a message to initialised url.
-     *
-     * @param string $massage
+     * Send a message to Bot.
      *
      * @return bool
      */
-    public function sendMessage(string $messsage): bool
+    public function sendMessage(): bool
     {
         curl_setopt($this->ch, CURLOPT_POST, true);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query(['message' => $messsage]));
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query(['message' => $this->message]));
 
         return curl_exec($this->ch);
     }
 
     /**
-     * Send a warning message.
+     * Add a warning message.
      *
-     * @param string $message
+     * @param string $warning
      *
-     * @return bool
+     * @return void
      */
-    public function sendWarning(string $message): bool
+    public function addWarningMessage(string $warning): void
     {
-        return $this->sendMessage(self::EMOJI_WARNING . $message);
+        $this->message .= self::EMOJI_WARNING . $warning . PHP_EOL;
     }
 
     /**
-     * Send an error message.
+     * Add an error message.
      *
-     * @param string $message
+     * @param string $error
      *
-     * @return bool
+     * @return void
      */
-    public function sendError(string $message): bool
+    public function addErrorMessage(string $error): void
     {
-        return $this->sendMessage(self::EMOJI_ERROR . $message);
+        $this->message .= self::EMOJI_ERROR . $error . PHP_EOL;
     }
 }
