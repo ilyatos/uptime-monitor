@@ -44,6 +44,8 @@ class Monitor
                 continue;
             }
         }
+
+        $this->notificationBot->sendMessage();
     }
 
     /**
@@ -53,6 +55,10 @@ class Monitor
      */
     public function runForOne(array $service): void
     {
+        if ($service['alias'] === null) {
+            $service['alias'] = $service['url'];
+        }
+
         $serviceResponseData = $this->checkService($service['id'], $service['url'], $service['alias']);
         Response::store($serviceResponseData);
     }
@@ -99,10 +105,16 @@ class Monitor
             $sizeReason = $responseSizeModule->getSizeDifferenceAsReason($previousAvailableSizes);
 
             $reason = $this->getFinalReason($timeReason, $sizeReason);
+
+            if ($reason != self::NO_ERROR_REASON) {
+                $this->notificationBot->addWarningMessage($reason . ' for ' . $serviceAlias);
+            }
         } else {
             $result['availability'] = 0;
 
             $reason = $httpStatusCodeModule->getCodeName();
+
+            $this->notificationBot->addErrorMessage($reason . ' for ' . $serviceAlias);
         }
 
         $result['reason_id'] = Reason::findOrCreateReasonId($reason);

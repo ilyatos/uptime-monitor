@@ -7,7 +7,7 @@ use Monitor\Helpers\ResponseFromService;
 class ResponseTime
 {
     const NO_ERROR_REASON = 'No error';
-    const TIME_ERROR = 0.2;
+    const TIME_ERROR = 0.3;
 
     private $response;
 
