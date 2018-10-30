@@ -64,7 +64,7 @@ class Monitor
     /**
      * Check if service is available or not.
      *
-     * @param int $serviceId
+     * @param int    $serviceId
      * @param string $serviceUrl
      * @param string $serviceAlias
      *

@@ -7,10 +7,10 @@ class Error
     /**
      * Error handler. Converts all errors to Exceptions by throwing an ErrorException.
      *
-     * @param int $level Error level
+     * @param int    $level   Error level
      * @param string $message Error message
-     * @param string $file Filename where the error was raised
-     * @param int $line Line number in the file
+     * @param string $file    Filename where the error was raised
+     * @param int    $line    Line number in the file
      *
      * @throws \ErrorException
      */

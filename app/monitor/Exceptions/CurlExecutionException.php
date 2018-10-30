@@ -9,9 +9,9 @@ class CurlExecutionException extends \Exception
     /**
      * CurlExecutionException constructor.
      *
-     * @param string $url
-     * @param string $reason
-     * @param int $code
+     * @param string         $url
+     * @param string         $reason
+     * @param int            $code
      * @param Throwable|null $previous
      */
     public function __construct(string $url, string $reason = '', int $code = 0, Throwable $previous = null)

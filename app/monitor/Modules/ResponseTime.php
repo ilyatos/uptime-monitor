@@ -24,7 +24,7 @@ class ResponseTime
     /**
      * Returns the change size reason.
      *
-     * @param int $responseSize
+     * @param int   $responseSize
      * @param array $storageSizes
      *
      * @return string
