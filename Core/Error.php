@@ -13,7 +13,6 @@ class Error
      * @param int $line Line number in the file
      *
      * @throws \ErrorException
-     *
      */
     public static function errorHandler($level, $message, $file, $line)
     {
@@ -26,7 +25,6 @@ class Error
      * Exception handler
      *
      * @param \Exception $exception The exception
-     *
      */
     public static function exceptionHandler($exception)
     {

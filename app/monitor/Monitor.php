@@ -5,6 +5,7 @@ namespace Monitor;
 use App\Entities\Reason;
 use App\Entities\Response;
 use App\Entities\Service;
+use Monitor\Exceptions\CurlExecutionException;
 use Monitor\Helpers\BotNotification;
 use Monitor\Helpers\RequestToService;
 use Monitor\Modules\HttpStatusCode;
@@ -17,7 +18,6 @@ class Monitor
 
     private $requestToService;
     private $notificationBot;
-    private $notificationMessage;
 
     /**
      * Boot modules.
@@ -30,19 +30,15 @@ class Monitor
 
     /**
      * The Monitor's runner.
+     *
+     * @throws CurlExecutionException
      */
     public function run(): void
     {
         $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            //temporary solution
-            try {
-                $this->runForOne($service);
-            } catch (\Exception $e) {
-                echo "Exception occurs for service: " . $service['url'] . ' ' . $e->getMessage();
-                continue;
-            }
+            $this->runForOne($service);
         }
 
         $this->notificationBot->sendMessage();
@@ -52,6 +48,8 @@ class Monitor
      * The Monitor's runner for one service.
      *
      * @param array $service
+     *
+     * @throws CurlExecutionException
      */
     public function runForOne(array $service): void
     {
@@ -69,6 +67,8 @@ class Monitor
      * @param int $serviceId
      * @param string $serviceUrl
      * @param string $serviceAlias
+     *
+     * @throws CurlExecutionException
      *
      * @return array
      */

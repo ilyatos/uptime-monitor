@@ -2,7 +2,7 @@
 
 namespace Monitor\Helpers;
 
-use PhpParser\Node\Arg;
+use Monitor\Exceptions\CurlExecutionException;
 
 final class BotNotification
 {
@@ -23,6 +23,8 @@ final class BotNotification
     /**
      * Send a message to Bot.
      *
+     * @throws CurlExecutionException
+     *
      * @return bool
      */
     public function sendMessage(): bool
@@ -30,15 +32,19 @@ final class BotNotification
         curl_setopt($this->ch, CURLOPT_POST, true);
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query(['message' => $this->message]));
 
-        return curl_exec($this->ch);
+        $exResult = curl_exec($this->ch);
+
+        if (!$exResult || preg_match('/^(3|4|5)\d{2}$/', curl_getinfo($this->ch, CURLINFO_HTTP_CODE))) {
+            throw new CurlExecutionException(getenv('BOT_URL'), curl_error($this->ch));
+        }
+
+        return $exResult;
     }
 
     /**
      * Add a warning message.
      *
      * @param string $warning
-     *
-     * @return void
      */
     public function addWarningMessage(string $warning): void
     {
@@ -49,8 +55,6 @@ final class BotNotification
      * Add an error message.
      *
      * @param string $error
-     *
-     * @return void
      */
     public function addErrorMessage(string $error): void
     {

@@ -2,8 +2,12 @@
 
 namespace Monitor\Helpers;
 
+use Monitor\Exceptions\CurlExecutionException;
+
 final class RequestToService
 {
+    const REQUEST_TIMEOUT = 5;
+
     private $ch;
 
     /**
@@ -15,7 +19,7 @@ final class RequestToService
 
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, self::REQUEST_TIMEOUT);
     }
 
     /**
@@ -23,7 +27,7 @@ final class RequestToService
      *
      * @param string $url
      *
-     * @throws \Exception
+     * @throws CurlExecutionException
      *
      * @return \Monitor\Helpers\ResponseFromService
      */
@@ -34,8 +38,7 @@ final class RequestToService
         $execResult = curl_exec($this->ch);
 
         if (!$execResult) {
-            $curlError = curl_error($this->ch);
-            throw new \Exception("Curl execution failed: $curlError");
+            throw new CurlExecutionException($url, curl_error($this->ch));
         }
 
         return new ResponseFromService($execResult, $this->ch);
