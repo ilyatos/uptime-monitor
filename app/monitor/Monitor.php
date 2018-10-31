@@ -5,6 +5,7 @@ namespace Monitor;
 use App\Entities\Reason;
 use App\Entities\Response;
 use App\Entities\Service;
+use Monitor\Exceptions\CurlExecutionException;
 use Monitor\Helpers\BotNotification;
 use Monitor\Helpers\RequestToService;
 use Monitor\Modules\HttpStatusCode;
@@ -17,7 +18,6 @@ class Monitor
 
     private $requestToService;
     private $notificationBot;
-    private $notificationMessage;
 
     /**
      * Boot modules.
@@ -30,29 +30,33 @@ class Monitor
 
     /**
      * The Monitor's runner.
+     *
+     * @throws CurlExecutionException
      */
     public function run(): void
     {
         $services = Service::all(['id', 'alias', 'url']);
 
         foreach ($services as $service) {
-            //temporary solution
-            try {
-                $this->runForOne($service);
-            } catch (\Exception $e) {
-                echo "Exception occurs for service: " . $service['url'] . ' ' . $e->getMessage();
-                continue;
-            }
+            $this->runForOne($service);
         }
+
+        $this->notificationBot->sendMessage();
     }
 
     /**
      * The Monitor's runner for one service.
      *
      * @param array $service
+     *
+     * @throws CurlExecutionException
      */
     public function runForOne(array $service): void
     {
+        if ($service['alias'] === null) {
+            $service['alias'] = $service['url'];
+        }
+
         $serviceResponseData = $this->checkService($service['id'], $service['url'], $service['alias']);
         Response::store($serviceResponseData);
     }
@@ -60,9 +64,11 @@ class Monitor
     /**
      * Check if service is available or not.
      *
-     * @param int $serviceId
+     * @param int    $serviceId
      * @param string $serviceUrl
      * @param string $serviceAlias
+     *
+     * @throws CurlExecutionException
      *
      * @return array
      */
@@ -99,10 +105,16 @@ class Monitor
             $sizeReason = $responseSizeModule->getSizeDifferenceAsReason($previousAvailableSizes);
 
             $reason = $this->getFinalReason($timeReason, $sizeReason);
+
+            if ($reason != self::NO_ERROR_REASON) {
+                $this->notificationBot->addWarningMessage($reason . ' for ' . $serviceAlias);
+            }
         } else {
             $result['availability'] = 0;
 
             $reason = $httpStatusCodeModule->getCodeName();
+
+            $this->notificationBot->addErrorMessage($reason . ' for ' . $serviceAlias);
         }
 
         $result['reason_id'] = Reason::findOrCreateReasonId($reason);

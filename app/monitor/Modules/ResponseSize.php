@@ -7,7 +7,9 @@ use Monitor\Helpers\ResponseFromService;
 class ResponseSize
 {
     const NO_ERROR_REASON = 'No error';
-    const SIZE_ERROR = 0.1;
+    const DEFAULT_SIZE_ERROR = 0.3;
+
+    private static $sizeError;
 
     private $response;
 
@@ -18,6 +20,8 @@ class ResponseSize
      */
     public function __construct(ResponseFromService $response)
     {
+        self::$sizeError = getenv('RESPONSE_SIZE_ERROR') ?: self::DEFAULT_SIZE_ERROR;
+        echo self::$sizeError;
         $this->response = $response;
     }
 
@@ -40,7 +44,7 @@ class ResponseSize
 
         $comparative = $this->response->getSize() > $average ? 'bigger' : 'smaller';
 
-        $reason = $diff / 100 > self::SIZE_ERROR ? sprintf(
+        $reason = $diff / 100 > self::$sizeError ? sprintf(
             'Response size %u%% %s',
             $diff,
             $comparative
