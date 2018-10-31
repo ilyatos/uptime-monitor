@@ -7,7 +7,9 @@ use Monitor\Helpers\ResponseFromService;
 class ResponseTime
 {
     const NO_ERROR_REASON = 'No error';
-    const TIME_ERROR = 0.3;
+    const DEFAULT_TIME_ERROR = 0.3;
+
+    private static $timeError;
 
     private $response;
 
@@ -18,6 +20,7 @@ class ResponseTime
      */
     public function __construct(ResponseFromService $response)
     {
+        self::$timeError = getenv('RESPONSE_TIME_ERROR') ?: self::DEFAULT_TIME_ERROR;
         $this->response = $response;
     }
 
@@ -41,7 +44,7 @@ class ResponseTime
 
         $comparative = $this->response->getTime() > $average ? 'longer' : 'faster';
 
-        $reason = $diff / 100 > self::TIME_ERROR ? sprintf(
+        $reason = $diff / 100 > self::$timeError ? sprintf(
             'Response time %u%% %s',
             $diff,
             $comparative

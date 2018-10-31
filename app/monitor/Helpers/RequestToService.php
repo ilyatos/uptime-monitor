@@ -6,7 +6,9 @@ use Monitor\Exceptions\CurlExecutionException;
 
 final class RequestToService
 {
-    const REQUEST_TIMEOUT = 5;
+    const DEFAULT_REQUEST_TIMEOUT = 5;
+
+    private static $requestTimeout;
 
     private $ch;
 
@@ -15,11 +17,12 @@ final class RequestToService
      */
     public function __construct()
     {
+        self::$requestTimeout = getenv('REQUEST_TIMEOUT') ?: self::DEFAULT_REQUEST_TIMEOUT;
         $this->ch = curl_init();
 
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT, self::REQUEST_TIMEOUT);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, self::$requestTimeout);
     }
 
     /**
