@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Entities\Reason;
-use App\Entities\Response;
-use App\Entities\Service;
 use App\Http\ApiResponse;
+use App\Models\Reason;
+use App\Models\Response;
+use App\Models\Service;
 use Monitor\Monitor;
 
 class ServiceController
@@ -19,22 +19,23 @@ class ServiceController
     {
         $result = [];
 
-        $services = Service::all(['id', 'alias', 'url']);
+        $services = Service::all();
 
         foreach ($services as $service) {
-            $serviceLastResponse = Response::find(['availability', 'reason_id'])
-                ->where([['service_id' => $service['id']]])
-                ->orderBy('id', 'DESC')
-                ->limit(1)->get();
+            /** @var Response $serviceLastResponse */
+            $serviceLastResponse = Response::query()->where('service_id', '=', $service->id)
+                ->orderBy('id', 'desc')
+                ->first();
 
-            $reason = Reason::find(['reason'])->where([['id' => $serviceLastResponse['reason_id']]])->get();
+            /** @var Reason $reason */
+            $reason = $serviceLastResponse->reason;
 
             $result[] = [
-                'id' => $service['id'],
-                'alias' => $service['alias'],
-                'url' => $service['url'],
-                'availability' => $serviceLastResponse['availability'],
-                'reason' => $reason['reason']
+                'id' => $service->id,
+                'alias' => $service->alias,
+                'url' => $service->url,
+                'availability' => $serviceLastResponse->availability,
+                'reason' => $reason->reason
             ];
         }
 
@@ -53,16 +54,14 @@ class ServiceController
             'url' => input()->post('url')
         ];
 
-        if (Service::existsWhere('url', $values['url'])) {
+        if (Service::query()->where('url', '=', $values['url'])->exists()) {
             return ApiResponse::error(400, 'Duplicate entry.');
         }
 
-        Service::store($values);
-
-        $createdService = Service::find()->where([['url' => $values['url']]])->get();
+        $service = Service::create($values);
 
         $monitorInstance = new Monitor();
-        $monitorInstance->runForOne($createdService);
+        $monitorInstance->runForOne($service);
 
         return ApiResponse::success(201);
     }
@@ -76,7 +75,7 @@ class ServiceController
      */
     public function delete(int $id)
     {
-        if (Service::delete()->where([['id' => $id]])->executeWithRowCount() === 0) {
+        if (!Service::find($id)->delete()) {
             return ApiResponse::error(400);
         }
 

@@ -31,6 +31,7 @@ class CreateTables
                 alias VARCHAR (255),
                 url VARCHAR (255) NOT NULL UNIQUE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
             ";
@@ -50,6 +51,7 @@ class CreateTables
                 id INT NOT NULL AUTO_INCREMENT,
                 reason VARCHAR (255) NOT NULL UNIQUE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
             ";
@@ -73,6 +75,7 @@ class CreateTables
                 availability TINYINT (1),
                 reason_id INT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
                 FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
                 FOREIGN KEY (reason_id) REFERENCES reasons(id)
