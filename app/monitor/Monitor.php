@@ -5,7 +5,6 @@ namespace Monitor;
 use App\Models\Reason;
 use App\Models\Response;
 use App\Models\Service;
-use Illuminate\Support\Collection;
 use Monitor\Exceptions\CurlExecutionException;
 use Monitor\Helpers\BotNotification;
 use Monitor\Helpers\RequestToService;

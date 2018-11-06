@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Reason
+ *
  * @package App\Models
  *
  * @property int $id
@@ -23,5 +24,4 @@ class Reason extends Model
     protected $fillable = [
         'reason'
     ];
-
 }

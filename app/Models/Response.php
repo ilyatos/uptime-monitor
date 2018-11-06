@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Response
+ *
  * @package App\Models
  *
  * @property int $id
@@ -36,5 +37,4 @@ class Response extends Model
     {
         return $this->hasOne('App\Models\Reason', 'id', 'reason_id');
     }
-
 }

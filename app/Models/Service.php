@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Service
+ *
  * @package App\Models
  *
  * @property int $id
