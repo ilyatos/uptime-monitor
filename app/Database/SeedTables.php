@@ -2,7 +2,7 @@
 
 namespace App\Database;
 
-use App\Entities\Service;
+use App\Models\Service;
 use Monitor\Monitor;
 
 class SeedTables
@@ -34,9 +34,7 @@ class SeedTables
     private static function seedServicesTable()
     {
         foreach (self::$servicesSeeds as $seed) {
-            Service::store($seed);
-
-            $createdService = Service::find()->where([['url' => $seed['url']]])->get();
+            $createdService = Service::create($seed);
 
             $monitorInstance = new Monitor();
             $monitorInstance->runForOne($createdService);

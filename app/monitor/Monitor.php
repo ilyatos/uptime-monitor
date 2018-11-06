@@ -2,9 +2,10 @@
 
 namespace Monitor;
 
-use App\Entities\Reason;
-use App\Entities\Response;
-use App\Entities\Service;
+use App\Models\Reason;
+use App\Models\Response;
+use App\Models\Service;
+use Illuminate\Support\Collection;
 use Monitor\Exceptions\CurlExecutionException;
 use Monitor\Helpers\BotNotification;
 use Monitor\Helpers\RequestToService;
@@ -35,7 +36,7 @@ class Monitor
      */
     public function run(): void
     {
-        $services = Service::all(['id', 'alias', 'url']);
+        $services = Service::all();
 
         foreach ($services as $service) {
             $this->runForOne($service);
@@ -51,14 +52,14 @@ class Monitor
      *
      * @throws CurlExecutionException
      */
-    public function runForOne(array $service): void
+    public function runForOne(Service $service): void
     {
-        if ($service['alias'] === null) {
-            $service['alias'] = $service['url'];
+        if ($service->alias === null) {
+            $service->alias = $service->url;
         }
 
-        $serviceResponseData = $this->checkService($service['id'], $service['url'], $service['alias']);
-        Response::store($serviceResponseData);
+        $serviceResponseData = $this->checkService($service->id, $service->url, $service->alias);
+        Response::create($serviceResponseData);
     }
 
     /**
@@ -89,20 +90,17 @@ class Monitor
         if ($httpStatusCodeModule->match('^2\d{2}$')) {
             $result['availability'] = 1;
 
-            $noErrorId = Reason::findOrCreateReasonId(self::NO_ERROR_REASON);
+            $noErrorId = Reason::firstOrCreate(['reason' => self::NO_ERROR_REASON])->id;
 
-            $previousAvailableSizes = Response::find(['response_size'])->where([
-                ['service_id' => $serviceId, 'AND'],
-                ['reason_id' => $noErrorId]
-            ])->getAll(\PDO::FETCH_COLUMN);
+            $responseSizeAndTime = Response::query()->where([
+                ['service_id', '=', $serviceId],
+                ['reason_id', '=', $noErrorId]
+            ])->get(['response_size', 'response_time']);
 
-            $previousAvailableTime = Response::find(['response_time'])->where([
-                ['service_id' => $serviceId, 'AND'],
-                ['reason_id' => $noErrorId]
-            ])->getAll(\PDO::FETCH_COLUMN);
-
-            $timeReason = $responseTimeModule->getTimeDifferenceAsReason($previousAvailableTime);
-            $sizeReason = $responseSizeModule->getSizeDifferenceAsReason($previousAvailableSizes);
+            $timeReason = $responseTimeModule
+                ->getTimeDifferenceAsReason($responseSizeAndTime->pluck('response_time')->toArray());
+            $sizeReason = $responseSizeModule
+                ->getSizeDifferenceAsReason($responseSizeAndTime->pluck('response_size')->toArray());
 
             $reason = $this->getFinalReason($timeReason, $sizeReason);
 
@@ -117,7 +115,7 @@ class Monitor
             $this->notificationBot->addErrorMessage($reason . ' for ' . $serviceAlias);
         }
 
-        $result['reason_id'] = Reason::findOrCreateReasonId($reason);
+        $result['reason_id'] = Reason::firstOrCreate(['reason' => $reason])->id;
 
         return $result;
     }
