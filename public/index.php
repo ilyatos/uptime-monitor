@@ -1,6 +1,7 @@
 <?php
 
 require_once '../app/boot.php';
+require_once '../app/boot_orm.php';
 
 use Pecee\SimpleRouter\SimpleRouter;
 
